@@ -133,7 +133,7 @@ textarea {
   background: url('../images/delete-hover.svg') no-repeat;
 }
 
-.quality-rating {
+.quality-rating, h4 {
   display: inline-block;
   /*float: left;*/
 }
