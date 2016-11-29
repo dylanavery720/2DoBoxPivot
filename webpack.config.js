@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   entry: {
     main: "./lib/index.js",
-    test: "./test/index.js"
+    test: "mocha!./test/index.js"
   },
   output: {
     path: __dirname,
@@ -11,12 +11,12 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.js$/, exclude: "/node_modules/", loader: "babel-loader"},
+      { test: /\.js$/, exclude: '/node_modules/', loader: 'babel-loader', query: { presets: ['babel-preset-es2015'] } },
       { test: /\.css$/, loader: "style!css" },
       { test: /\.scss$/, loader: "style!css!sass" }
     ]
   },
   resolve: {
-    extensions: ["", ".js", ".json", ".scss", ".css"]
+    extensions: ['', '.js', '.json', '.scss', '.css']
   }
 }
