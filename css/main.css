@@ -71,7 +71,7 @@ margin: 32px;
   color: #F3CA40;
 }
 
-.quality-container {
+.importance-container {
   padding: 15px 0px 10px 8px;
   margin-bottom: 15px;
 }
@@ -133,7 +133,7 @@ textarea {
   cursor: pointer;
 }
 
-.quality-rating, h4 {
+.importance-rating, h4 {
   display: inline-block;
   /*float: left;*/
 }
