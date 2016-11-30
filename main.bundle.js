@@ -51,7 +51,7 @@
 	var $ = __webpack_require__(1);
 
 	$(document).ready(function () {
-	  if (localStorage.length !== 0) loadStorage();
+	  loadStorage();
 	  $('#save-button').prop('disabled', true);
 	});
 
@@ -60,18 +60,19 @@
 	var $userSearch = $('#search-box');
 	var $h2 = $('h2');
 	var $p = $('p');
+	var importanceLevel = ["None", "Low", "Normal", "High", "Critical"];
 
 	var NewIdea = function NewIdea(id, title, body) {
-	  var quality = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "swill";
+	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
 	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
 	  _classCallCheck(this, NewIdea);
 
-	  return { id: id, title: title, body: body, quality: quality, completed: completed };
+	  return { id: id, title: title, body: body, importance: importance, completed: completed };
 	};
 
 	var newIdeaBoxCreator = function newIdeaBoxCreator(obj) {
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'quality-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UP</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">quality: </h4>\n        <h4 class=\'quality-rating\' tabindex="0">' + obj.quality + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
+	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n        <button type=\'button\' name=\'button\' class=\'show-more-button\'>SHOW MORE 2Dos</button>\n      </div>\n  </article>');
 	};
 
 	var deleteIdeaStorage = function deleteIdeaStorage(id) {
@@ -79,9 +80,13 @@
 	};
 
 	var loadStorage = function loadStorage() {
+	  var storageNumber = 0;
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (!storedObj.completed) newIdeaBoxCreator(storedObj);
+	    if (!storedObj.completed && storageNumber < 10) {
+	      newIdeaBoxCreator(storedObj);
+	      storageNumber++;
+	    }
 	  }
 	};
 
@@ -110,6 +115,10 @@
 	  }
 	  $("#show-completed-button").prop("disabled", true);
 	};
+
+	// const showMore = () => {
+	//
+	// }
 
 	var complete = function complete(task) {
 	  var $selector = task.closest(".task-box");
@@ -147,36 +156,30 @@
 	  $('#save-button').prop('disabled', true);
 	};
 
-	var upVote = function upVote(taskCard) {
+	var updateVote = function updateVote(taskCard) {
 	  var $selector = taskCard.closest(".task-box");
-	  var $quality = $selector.find('.quality-rating');
-	  var $currentId = $selector.attr('id');
-	  var storedObj = JSON.parse(localStorage.getItem($currentId));
+	  var $importance = $selector.find('.importance-rating');
+	  var buttonPressed = taskCard.text();
+	  var id = $selector.attr('id');
+	  var storedObj = JSON.parse(localStorage.getItem(id));
+	  var currentImportance = storedObj.importance;
+	  var importanceLevelIndex = importanceLevel.indexOf(currentImportance);
 
-	  if ($quality.text() === "swill") {
-	    $quality.text("plausible");
-	    storedObj.quality = "plausible";
-	  } else if ($quality.text() === "plausible") {
-	    $quality.text("genius");
-	    storedObj.quality = "genius";
+	  if (importanceLevelIndex < 4 && buttonPressed === "UPVOTE") {
+	    var index = importanceLevelIndex + 1;
+	    var newImportanceLevel = importanceLevel[index];
+	    $importance.text(newImportanceLevel);
+	    storedObj.importance = newImportanceLevel;
 	  }
-	  localStorage.setItem($currentId, JSON.stringify(storedObj));
-	};
 
-	var downVote = function downVote(taskCard) {
-	  var $selector = taskCard.closest(".task-box");
-	  var $quality = $selector.find('.quality-rating');
-	  var $currentId = $selector.attr('id');
-	  var storedObj = JSON.parse(localStorage.getItem($currentId));
-
-	  if ($quality.text() === "genius") {
-	    $quality.text("plausible");
-	    storedObj.quality = "plausible";
-	  } else if ($quality.text() === "plausible") {
-	    $quality.text("swill");
-	    storedObj.quality = "swill";
+	  if (importanceLevelIndex > 0 && buttonPressed === "DOWNVOTE") {
+	    var _index = importanceLevelIndex - 1;
+	    var _newImportanceLevel = importanceLevel[_index];
+	    $importance.text(_newImportanceLevel);
+	    storedObj.importance = _newImportanceLevel;
 	  }
-	  localStorage.setItem($currentId, JSON.stringify(storedObj));
+
+	  localStorage.setItem(id, JSON.stringify(storedObj));
 	};
 
 	var mainFunction = function mainFunction(obj) {
@@ -230,26 +233,22 @@
 
 	$('.task-container').on('click', '.delete-button', function () {
 	  var $selector = $(this).closest(".task-box");
-	  var $id = $selector.attr('id');
-	  localStorage.removeItem($id);
+	  var id = $selector.attr('id');
+	  localStorage.removeItem(id);
 	  $selector.remove();
 	});
 
-	$('.task-container').on('click', '.up-button', function () {
-	  upVote($(this));
-	});
-
-	$('.task-container').on('click', '.down-button', function () {
-	  downVote($(this));
+	$('.task-container').on('click', '.up-button, .down-button', function () {
+	  updateVote($(this));
 	});
 
 	$('.task-container').on('blur', ".task-title, .task-body", function (event) {
 	  var $selector = $(this).closest(".task-box");
-	  var $id = $selector.prop("id");
-	  var storedObj = JSON.parse(localStorage.getItem($id));
+	  var id = $selector.prop("id");
+	  var storedObj = JSON.parse(localStorage.getItem(id));
 	  storedObj.title = $selector.find(".task-title").text();
 	  storedObj.body = $selector.find(".task-body").text();
-	  localStorage.setItem($id, JSON.stringify(storedObj));
+	  localStorage.setItem(id, JSON.stringify(storedObj));
 	});
 
 	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
@@ -267,6 +266,10 @@
 	$("#show-completed-button").on("click", function () {
 	  showCompleted();
 	});
+
+	// $("#show-more-button").on("click", () => {
+	//   showMore();
+	// })
 
 /***/ },
 /* 1 */
