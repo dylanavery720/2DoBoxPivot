@@ -51,7 +51,7 @@
 	var $ = __webpack_require__(1);
 
 	$(document).ready(function () {
-	  if (localStorage.length !== 0) loadStorage();
+	  loadStorage();
 	  $('#save-button').prop('disabled', true);
 	});
 
@@ -72,7 +72,11 @@
 	};
 
 	var newIdeaBoxCreator = function newIdeaBoxCreator(obj) {
+<<<<<<< HEAD
 	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
+=======
+	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n        <button type=\'button\' name=\'button\' class=\'show-more-button\'>SHOW MORE 2Dos</button>\n      </div>\n  </article>');
+>>>>>>> master
 	};
 
 	var deleteIdeaStorage = function deleteIdeaStorage(id) {
@@ -80,9 +84,19 @@
 	};
 
 	var loadStorage = function loadStorage() {
+<<<<<<< HEAD
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    if (!storedObj.completed) newIdeaBoxCreator(storedObj);
+=======
+	  var storageNumber = 0;
+	  for (var i = 0; i < localStorage.length; i++) {
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    if (!storedObj.completed && storageNumber < 10) {
+	      newIdeaBoxCreator(storedObj);
+	      storageNumber++;
+	    }
+>>>>>>> master
 	  }
 	};
 
@@ -112,6 +126,13 @@
 	  $("#show-completed-button").prop("disabled", true);
 	};
 
+<<<<<<< HEAD
+=======
+	// const showMore = () => {
+	//
+	// }
+
+>>>>>>> master
 	var complete = function complete(task) {
 	  var $selector = task.closest(".task-box");
 	  var id = $selector.prop("id");
@@ -259,6 +280,13 @@
 	  showCompleted();
 	});
 
+<<<<<<< HEAD
+=======
+	// $("#show-more-button").on("click", () => {
+	//   showMore();
+	// })
+
+>>>>>>> master
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {

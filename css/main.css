@@ -28,7 +28,7 @@ article h2 {
   margin-left: 5px;
 }
 
-input, textarea, #save-button, #search-box, #show-completed-button {
+input, textarea, #save-button, #search-box, #show-completed-button, #show-more-button {
   display: block;
   margin: 20px auto;
   font-size: 1em;
@@ -45,7 +45,7 @@ input, textarea {
   width: 88%;
 }
 
-#save-button, #show-completed-button {
+#save-button, #show-completed-button, #show-more-button {
   background: #F2A541;
   color: #FFFFFF;
   border: none;
@@ -71,11 +71,6 @@ margin: 32px;
 .task-header {
   color: #ffc500;
 }
-
-/*.task-title:focus {
-  border: 2px solid #;
-  margin-left: 50px;
-}*/
 
 .importance-container {
   padding: 15px 0px 10px 8px;
@@ -164,7 +159,7 @@ textarea {
 
 
 
- #save-button[disabled], #show-completed-button[disabled] {
+ #save-button[disabled], #show-completed-button[disabled], #show-more-button[disabled] {
  background: #3C3C3C;
  cursor: default;
 }
@@ -200,7 +195,7 @@ input, textarea {
   margin: 0px auto;
 }
 
-#save-button, #show-completed-button {
+#save-button, #show-completed-button, #show-more-button {
     width: 61.5%;
 }
 
