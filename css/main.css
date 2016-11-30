@@ -68,7 +68,7 @@ margin: 32px;
 }
 
 .task-header {
-  color: #F3CA40;
+  color: #ffc500;
 }
 
 .importance-container {
@@ -78,6 +78,19 @@ margin: 32px;
 
 textarea {
   resize: none;
+}
+
+.complete-button {
+  background-color: #577590;
+  border: none;
+  color: white;
+  float: right;
+  margin-right: 5px;
+}
+
+.complete-button:hover {
+  cursor: pointer;
+  background-color: #F2A541;
 }
 
 #body-input {
