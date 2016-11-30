@@ -63,11 +63,11 @@ p {
   margin-top: 15px;
 }
 
-.idea-container {
+.task-container {
 margin: 32px;
 }
 
-.idea-header {
+.task-header {
   color: #F3CA40;
 }
 
@@ -170,7 +170,7 @@ input, textarea {
   width: 60%;
 }
 
-.idea-container {
+.task-container {
   width: 60%;
   margin: 0px auto;
 }
