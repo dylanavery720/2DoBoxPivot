@@ -46,6 +46,8 @@
 
 	'use strict';
 
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 	var $ = __webpack_require__(1);
 
 	$(document).ready(function () {
@@ -59,36 +61,94 @@
 	var $h2 = $('h2');
 	var $p = $('p');
 
-	function NewIdea(id, title, body, quality) {
-	  this.id = id;
-	  this.title = title;
-	  this.body = body;
-	  this.quality = quality || "swill";
-	}
+	var NewIdea = function NewIdea(id, title, body) {
+	  var quality = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "swill";
+	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-	function newIdeaBoxCreator(object) {
-	  $('.idea-container').prepend('<article id=' + object.id + ' class=\'idea-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'idea-title\' contenteditable=\'true\'>' + object.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'></button>\n      </div>\n      <p class=\'idea-body\' contenteditable=\'true\'>' + object.body + '</p>\n      <div class=\'quality-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'></button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'></button>\n        <h4>quality: </h4>\n        <h4 class=\'quality-rating\'>' + object.quality + '</h4>\n      </div>\n  </article>');
-	}
+	  _classCallCheck(this, NewIdea);
 
-	function deleteIdeaStorage(id) {
+	  return { id: id, title: title, body: body, quality: quality, completed: completed };
+	};
+
+	var newIdeaBoxCreator = function newIdeaBoxCreator(obj) {
+	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'quality-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UP</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">quality: </h4>\n        <h4 class=\'quality-rating\' tabindex="0">' + obj.quality + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
+	};
+
+	var deleteIdeaStorage = function deleteIdeaStorage(id) {
 	  localStorage.removeItem(id);
-	}
+	};
 
-	function loadStorage() {
+	var loadStorage = function loadStorage() {
 	  for (var i = 0; i < localStorage.length; i++) {
-	    var storedInfo = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    newIdeaBoxCreator(storedInfo);
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    if (!storedObj.completed) newIdeaBoxCreator(storedObj);
 	  }
-	}
+	};
 
-	function clearFields() {
+	var showCompleted = function showCompleted() {
+	  for (var i = 0; i < localStorage.length; i++) {
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    if (storedObj.completed) {
+	      (function () {
+	        newIdeaBoxCreator(storedObj);
+
+	        var $selector = $(".task-container").find('#' + storedObj.id);
+
+	        $selector.addClass("completed-task");
+
+	        var buttonArray = [".up-button, .down-button"];
+	        buttonArray.forEach(function (e) {
+	          $selector.find(e).prop("disabled", true);
+	        });
+
+	        var selectorArray = [".task-title, .task-body, h4"];
+	        selectorArray.forEach(function (e) {
+	          $selector.find(e).addClass("completed-task");
+	        });
+	      })();
+	    }
+	  }
+	  $("#show-completed-button").prop("disabled", true);
+	};
+
+	var complete = function complete(task) {
+	  var $selector = task.closest(".task-box");
+	  var id = $selector.prop("id");
+	  var storedObj = JSON.parse(localStorage.getItem(id));
+
+	  $selector.toggleClass("completed-task");
+
+	  var selectorArray = [".task-title, .task-body, h4"];
+	  selectorArray.forEach(function (e) {
+	    $selector.find(e).toggleClass("completed-task");
+	  });
+
+	  var buttonArray = [".up-button, .down-button"];
+	  buttonArray.forEach(function (e) {
+	    if ($selector.find(e).prop("disabled") === false) {
+	      $selector.find(e).prop("disabled", true);
+	    } else {
+	      $selector.find(e).prop("disabled", false);
+	    }
+	  });
+
+	  if (storedObj.completed) {
+	    storedObj.completed = false;
+	  } else {
+	    storedObj.completed = true;
+	  }
+
+	  localStorage.setItem(id, JSON.stringify(storedObj));
+	};
+
+	var clearFields = function clearFields() {
 	  $title.val('');
 	  $body.val('');
 	  $('#save-button').prop('disabled', true);
-	}
+	};
 
-	function upVote(ideaCard) {
-	  var $selector = ideaCard.closest(".idea-box");
+	var upVote = function upVote(taskCard) {
+	  var $selector = taskCard.closest(".task-box");
 	  var $quality = $selector.find('.quality-rating');
 	  var $currentId = $selector.attr('id');
 	  var storedObj = JSON.parse(localStorage.getItem($currentId));
@@ -101,10 +161,10 @@
 	    storedObj.quality = "genius";
 	  }
 	  localStorage.setItem($currentId, JSON.stringify(storedObj));
-	}
+	};
 
-	function downVote(ideaCard) {
-	  var $selector = ideaCard.closest(".idea-box");
+	var downVote = function downVote(taskCard) {
+	  var $selector = taskCard.closest(".task-box");
 	  var $quality = $selector.find('.quality-rating');
 	  var $currentId = $selector.attr('id');
 	  var storedObj = JSON.parse(localStorage.getItem($currentId));
@@ -117,23 +177,23 @@
 	    storedObj.quality = "swill";
 	  }
 	  localStorage.setItem($currentId, JSON.stringify(storedObj));
-	}
+	};
 
-	function mainFunction(obj) {
+	var mainFunction = function mainFunction(obj) {
 	  newIdeaBoxCreator(obj);
 	  localStorage.setItem(obj.id, JSON.stringify(obj));
 	  clearFields();
-	}
+	};
 
-	$('#search-box').keyup(function () {
-	  var filter = $(this).val(),
-	      count = 0;
-	  $('article').each(function () {
-	    if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+	$("#search-box").keyup(function () {
+	  var searchInput = $(this).val();
+	  $("article").each(function () {
+	    var title = $(this).find(".task-title").text();
+	    var body = $(this).find(".task-body").text();
+	    if (title.indexOf(searchInput) < 0 && body.indexOf(searchInput) < 0) {
 	      $(this).hide();
 	    } else {
 	      $(this).show();
-	      count++;
 	    }
 	  });
 	});
@@ -157,45 +217,55 @@
 	  }
 	});
 
-	function inputCheck() {
+	var inputCheck = function inputCheck() {
 	  return (/\S/.test($title.val()) && /\S/.test($body.val())
 	  );
-	}
+	};
 
 	$('#save-button').on('click', function () {
-	  var newIdeaObject = new NewIdea(Date.now(), $title.val(), $body.val());
+	  var val = [Date.now(), $title.val(), $body.val()];
+	  var newIdeaObject = new (Function.prototype.bind.apply(NewIdea, [null].concat(val)))();
 	  mainFunction(newIdeaObject);
 	});
 
-	$('.idea-container').on('click', '.delete-button', function () {
-	  var $selector = $(this).closest(".idea-box");
+	$('.task-container').on('click', '.delete-button', function () {
+	  var $selector = $(this).closest(".task-box");
 	  var $id = $selector.attr('id');
 	  localStorage.removeItem($id);
 	  $selector.remove();
 	});
 
-	$('.idea-container').on('click', '.up-button', function () {
+	$('.task-container').on('click', '.up-button', function () {
 	  upVote($(this));
 	});
 
-	$('.idea-container').on('click', '.down-button', function () {
+	$('.task-container').on('click', '.down-button', function () {
 	  downVote($(this));
 	});
 
-	$('.idea-container').on('blur', ".idea-title, .idea-body", function (event) {
-	  var $selector = $(this).closest(".idea-box");
+	$('.task-container').on('blur', ".task-title, .task-body", function (event) {
+	  var $selector = $(this).closest(".task-box");
 	  var $id = $selector.prop("id");
 	  var storedObj = JSON.parse(localStorage.getItem($id));
-	  storedObj.title = $selector.find(".idea-title").text();
-	  storedObj.body = $selector.find(".idea-body").text();
+	  storedObj.title = $selector.find(".task-title").text();
+	  storedObj.body = $selector.find(".task-body").text();
 	  localStorage.setItem($id, JSON.stringify(storedObj));
 	});
 
-	$('.idea-container').on('keypress', '.idea-title, .idea-body', function (event) {
+	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
 	  if (event.keyCode === 13) {
 	    event.preventDefault();
 	    $(this).blur();
+	    $("#title-input").focus();
 	  }
+	});
+
+	$('.task-container').on('click', '.complete-button', function () {
+	  complete($(this));
+	});
+
+	$("#show-completed-button").on("click", function () {
+	  showCompleted();
 	});
 
 /***/ },
