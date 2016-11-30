@@ -28,7 +28,7 @@ article h2 {
   padding: 5px 0px;
 }
 
-input, textarea, #save-button, #search-box {
+input, textarea, #save-button, #search-box, #show-completed-button {
   display: block;
   margin: 20px auto;
   font-size: 1em;
@@ -45,7 +45,7 @@ input, textarea {
   width: 88%;
 }
 
-#save-button {
+#save-button, #show-completed-button {
   background: #F2A541;
   color: #FFFFFF;
   border: none;
@@ -113,7 +113,7 @@ textarea {
   margin: auto;
 }
 
-#save-button:hover {
+#save-button:hover, #show-completed-button:hover {
   background: #dc7c40;
   cursor: pointer;
 }
@@ -150,6 +150,12 @@ textarea {
  cursor: default;
 }
 
+.completed-task {
+  background-color: #e3e3e3;
+  text-decoration: line-through;
+  color: #577590;
+}
+
 
 :-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: #D0D2D3;
@@ -175,7 +181,7 @@ input, textarea {
   margin: 0px auto;
 }
 
-#save-button {
+#save-button, #show-completed-button {
     width: 61.5%;
 }
 
