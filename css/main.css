@@ -145,7 +145,7 @@ textarea {
 
 
 
- #save-button[disabled] {
+ #save-button[disabled], #show-completed-button[disabled] {
  background: #3C3C3C;
  cursor: default;
 }
