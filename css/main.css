@@ -127,7 +127,7 @@ textarea {
   margin: 5px 5px 0 0;
 }
 
-#save-button:hover, #save-button:focus, #show-completed-button:hover, #show-completed-button:focus {
+#save-button:hover, #save-button:focus, #show-completed-button:hover, #show-completed-button:focus, #show-more-button:hover, #show-more-button:focus {
   background: #dc7c40;
   cursor: pointer;
 }
