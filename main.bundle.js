@@ -99,33 +99,34 @@
 	  }
 	};
 
-	var showCompleted = function showCompleted() {
-	  for (var i = 0; i < localStorage.length; i++) {
-	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (storedObj.completed) {
-	      (function () {
-	        newTaskCreator(storedObj);
+	var displayedCheck = function displayedCheck() {
+	  var displayedTasksArray = $(".task-box");
+	  var displayedTasksIds = [];
 
-	        var $selector = $(".task-container").find('#' + storedObj.id);
-
-	        $selector.addClass("completed-task");
-
-	        var buttonArray = [".up-button, .down-button"];
-	        buttonArray.forEach(function (e) {
-	          $selector.find(e).prop("disabled", true);
-	        });
-
-	        var selectorArray = [".task-title, .task-body, h4"];
-	        selectorArray.forEach(function (e) {
-	          $selector.find(e).addClass("completed-task");
-	        });
-	      })();
+	  displayedTasksArray.each(function (i) {
+	    if ($(displayedTasksArray[i]).prop("class") === "task-box completed-task") {
+	      displayedTasksIds.push($(displayedTasksArray[i]).prop("id"));
 	    }
-	  }
-	  $("#show-completed-button").prop("disabled", true);
+	  });
+
+	  return displayedTasksIds;
 	};
 
-	var complete = function complete(task) {
+	var showCompletedTasks = function showCompletedTasks() {
+	  var displayedTasksIds = displayedCheck();
+
+	  for (var i = 0; i < localStorage.length; i++) {
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
+
+	    if (storedObj.completed && idCheck < 0) {
+	      var task = newTaskCreator(storedObj);
+	      complete($($(".task-box")[0]));
+	    }
+	  }
+	};
+
+	var complete = function complete(task, clickEvent) {
 	  var $selector = task.closest(".task-box");
 	  var id = $selector.prop("id");
 	  var storedObj = JSON.parse(localStorage.getItem(id));
@@ -146,7 +147,7 @@
 	    }
 	  });
 
-	  if (storedObj.completed) {
+	  if (storedObj.completed && clickEvent === "click") {
 	    storedObj.completed = false;
 	  } else {
 	    storedObj.completed = true;
@@ -162,15 +163,27 @@
 	};
 
 	var showMoreTasks = function showMoreTasks() {
-	  var taskArray = $(".task-box");
-	  var completedArray = clearTasks(taskArray);
-	  loadRemainingTasks();
-	  completedArray.forEach(function (i) {
-	    $(".task-container").prepend(i);
-	  });
+	  var completedArray = clearTasks();
+
+	  for (var i = 0; i < localStorage.length; i++) {
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+	    if (!storedObj.completed) {
+	      newTaskCreator(storedObj);
+	    }
+
+	    completedArray.sort(function (a, b) {
+	      return a.id - b.id;
+	    });
+
+	    completedArray.forEach(function (i) {
+	      $(".task-container").prepend(i);
+	    });
+	  }
 	};
 
-	var clearTasks = function clearTasks(taskArray) {
+	var clearTasks = function clearTasks() {
+	  var taskArray = $(".task-box");
 	  var completedArray = [];
 
 	  taskArray.each(function (i) {
@@ -218,14 +231,14 @@
 	};
 
 	$("#search-box").keyup(function (e) {
-	  search($(e.target).val());
+	  search($(e.target).val().toLowerCase());
 	});
 
 	var search = function search(searchInput) {
 	  var taskArray = $("article");
 	  taskArray.each(function (e) {
-	    var title = $(taskArray[e]).find(".task-title").text();
-	    var body = $(taskArray[e]).find(".task-body").text();
+	    var title = $(taskArray[e]).find(".task-title").text().toLowerCase();
+	    var body = $(taskArray[e]).find(".task-body").text().toLowerCase();
 	    if (title.indexOf(searchInput) < 0 && body.indexOf(searchInput) < 0) {
 	      $(taskArray[e]).hide();
 	    } else {
@@ -250,6 +263,25 @@
 	  if (event.keyCode === 13 && inputCheck()) {
 	    $('#save-button').click();
 	    $($title.focus());
+	  }
+	});
+
+	$('#title-input').keydown(function (e) {
+	  console.log('test');
+	  var titleLim = 60;
+	  var titleLength = $title.val().length;
+
+	  if (titleLength > titleLim) {
+	    e.preventDefault();
+	  }
+	});
+
+	$('#body-input').keydown(function (e) {
+	  var bodyLim = 120;
+	  var bodyLength = $body.val().length;
+
+	  if (bodyLength > bodyLim) {
+	    e.preventDefault();
 	  }
 	});
 
@@ -293,16 +325,15 @@
 	});
 
 	$('.task-container').on('click', '.complete-button', function (e) {
-	  complete($(e.target));
+	  complete($(e.target), event.type);
 	});
 
 	$("#show-completed-button").on("click", function () {
-	  showCompleted();
+	  showCompletedTasks();
 	});
 
 	$("#show-more-button").on("click", function (e) {
 	  showMoreTasks();
-	  $(e.target).prop("disabled", true);
 	});
 
 	$(".filter-buttons-container").on("click", function (e) {
