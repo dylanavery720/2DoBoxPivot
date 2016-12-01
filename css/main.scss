@@ -1,26 +1,28 @@
+@import 'scss/variables.scss';
+
 body {
-  font-family: "Open-Sans", sans-serif;
+  font-family: $body-font;
 }
 
 header {
-  background: #577590;
+  background: $background-color;
   padding: 5px;
   text-align: center;
 }
 
 header, h2 {
-  font-family: "Roboto-Slab", serif;
+  font-family: $header-font;
   font-weight: 800;
 }
 
 header h1 {
   margin: 10px auto;
   font-size: 2.5em;
-  color: #3c3c3c;
+  color: $main-color;
 }
 
 article {
-  border-bottom: 2px solid #D1D3D4;
+  border-bottom: 2px solid $under-line-color;
 }
 
 article h2 {
@@ -46,8 +48,8 @@ input, textarea, #save-button, #search-box, #show-completed-button, #show-more-b
 }
 
 input, textarea {
-  font-family: "Open-Sans", sans-serif;
-  border: 2px solid #D1D3D4;
+  font-family: $body-font;
+  border: 2px solid $under-line-color;
   padding: 5px;
   width: 90%;
 }
@@ -57,8 +59,8 @@ input, textarea {
 }
 
 #save-button, #show-completed-button, #show-more-button {
-  background: #F2A541;
-  color: #FFFFFF;
+  background: $save-button-color;
+  color: $button-text-color;
   border: none;
   width: 92%;
   padding: 5px 0px 7px;
@@ -80,7 +82,7 @@ margin: 32px;
 }
 
 .task-header {
-  color: white;
+  color: $button-text-color;
 }
 
 .importance-container {
@@ -98,14 +100,14 @@ textarea {
 }
 
 .complete-button, .filter-button {
-  background-color: #577590;
+  background-color: $background-color;
   border: none;
-  color: white;
+  color: $button-text-color;
 }
 
 .complete-button:hover, .complete-button:focus, .filter-button:hover, .filterbutton:focus {
   cursor: pointer;
-  background-color: #F2A541;
+  background-color: $save-button-color;
 }
 
 #body-input {
@@ -118,7 +120,7 @@ textarea {
 }
 
  .up-button, .delete-button {
-  color: rgba(0,0,0,0);
+  color: $hidden-color;
   border: none;
   height: 30px;
   width: 30px;
@@ -127,7 +129,7 @@ textarea {
 
 .down-button {
   background: url('../images/downvote.svg') no-repeat;
-  color: rgba(0,0,0,0);
+  color: $hidden-color;
   border: none;
   float: left;
   height: 30px;
@@ -142,7 +144,7 @@ textarea {
 }
 
 #save-button:hover, #save-button:focus, #show-completed-button:hover, #show-completed-button:focus, #show-more-button:hover, #show-more-button:focus {
-  background: #dc7c40;
+  background: $button-hover-color;
   cursor: pointer;
 }
 
@@ -174,14 +176,14 @@ textarea {
 
 
  #save-button[disabled], #show-completed-button[disabled], #show-more-button[disabled] {
- background: #3C3C3C;
+ background: $main-color;
  cursor: default;
 }
 
 .completed-task {
-  background-color: #e3e3e3;
+  background-color: $completed-task-color;
   text-decoration: line-through;
-  color: #577590;
+  color: $background-color;
 }
 
 .filter-buttons-container{
@@ -194,16 +196,16 @@ textarea {
 }
 
 :-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color: #D0D2D3;
+  color: $webkit-placeholder-color;
 }
 :-moz-placeholder { /* Firefox 19+ */
-  color: #D0D2D3;
+  color: $webkit-placeholder-color;
 }
 :-ms-input-placeholder { /* IE 10+ */
-  color: #D0D2D3;
+  color: $webkit-placeholder-color;
 }
 :-moz-placeholder { /* Firefox 18- */
-  color: #D0D2D3;
+  color: $webkit-placeholder-color;
 }
 
 @media (min-width: 650px) {
@@ -223,4 +225,6 @@ input, textarea {
 
 #search-box {
   width: 59%;
+}
+
 }
