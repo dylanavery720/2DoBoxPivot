@@ -71,69 +71,62 @@
 	  return { id: id, title: title, body: body, importance: importance, completed: completed };
 	};
 
-	var newIdeaBoxCreator = function newIdeaBoxCreator(obj) {
-<<<<<<< HEAD
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
-=======
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n        <button type=\'button\' name=\'button\' class=\'show-more-button\'>SHOW MORE 2Dos</button>\n      </div>\n  </article>');
->>>>>>> master
+	var newTaskCreator = function newTaskCreator(obj) {
+	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n          <h2 class=\'task-title\' contenteditable>' + obj.title + '</h2>\n      </div>\n      <p class=\'task-body\' contenteditable>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n          <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n          <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n          <h4 tabindex="0">importance: </h4>\n          <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n          <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
 	};
 
 	var deleteIdeaStorage = function deleteIdeaStorage(id) {
 	  localStorage.removeItem(id);
 	};
 
-	var loadStorage = function loadStorage() {
-<<<<<<< HEAD
+	var loadRemainingTasks = function loadRemainingTasks() {
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (!storedObj.completed) newIdeaBoxCreator(storedObj);
-=======
+	    if (!storedObj.completed) {
+	      newTaskCreator(storedObj);
+	    }
+	  }
+	};
+
+	var loadStorage = function loadStorage() {
 	  var storageNumber = 0;
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    if (!storedObj.completed && storageNumber < 10) {
-	      newIdeaBoxCreator(storedObj);
+	      newTaskCreator(storedObj);
 	      storageNumber++;
 	    }
->>>>>>> master
 	  }
 	};
 
-	var showCompleted = function showCompleted() {
+	var displayedCheck = function displayedCheck() {
+	  var displayedTasksArray = $(".task-box");
+	  var displayedTasksIds = [];
+
+	  displayedTasksArray.each(function (i) {
+	    if ($(displayedTasksArray[i]).prop("class") === "task-box completed-task") {
+	      displayedTasksIds.push($(displayedTasksArray[i]).prop("id"));
+	    }
+	  });
+
+	  return displayedTasksIds;
+	};
+
+	var showCompletedTasks = function showCompletedTasks() {
+	  var displayedTasksIds = displayedCheck();
+
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (storedObj.completed) {
-	      (function () {
-	        newIdeaBoxCreator(storedObj);
+	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
 
-	        var $selector = $(".task-container").find('#' + storedObj.id);
-
-	        $selector.addClass("completed-task");
-
-	        var buttonArray = [".up-button, .down-button"];
-	        buttonArray.forEach(function (e) {
-	          $selector.find(e).prop("disabled", true);
-	        });
-
-	        var selectorArray = [".task-title, .task-body, h4"];
-	        selectorArray.forEach(function (e) {
-	          $selector.find(e).addClass("completed-task");
-	        });
-	      })();
+	    if (storedObj.completed && idCheck < 0) {
+	      var task = newTaskCreator(storedObj);
+	      complete($($(".task-box")[0]));
 	    }
 	  }
-	  $("#show-completed-button").prop("disabled", true);
 	};
 
-<<<<<<< HEAD
-=======
-	// const showMore = () => {
-	//
-	// }
-
->>>>>>> master
-	var complete = function complete(task) {
+	var complete = function complete(task, clickEvent) {
 	  var $selector = task.closest(".task-box");
 	  var id = $selector.prop("id");
 	  var storedObj = JSON.parse(localStorage.getItem(id));
@@ -154,7 +147,7 @@
 	    }
 	  });
 
-	  if (storedObj.completed) {
+	  if (storedObj.completed && clickEvent === "click") {
 	    storedObj.completed = false;
 	  } else {
 	    storedObj.completed = true;
@@ -167,6 +160,42 @@
 	  $title.val('');
 	  $body.val('');
 	  $('#save-button').prop('disabled', true);
+	};
+
+	var showMoreTasks = function showMoreTasks() {
+	  var completedArray = clearTasks();
+
+	  for (var i = 0; i < localStorage.length; i++) {
+	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+	    if (!storedObj.completed) {
+	      newTaskCreator(storedObj);
+	    }
+
+	    completedArray.sort(function (a, b) {
+	      return a.id - b.id;
+	    });
+
+	    completedArray.forEach(function (i) {
+	      $(".task-container").prepend(i);
+	    });
+	  }
+	};
+
+	var clearTasks = function clearTasks() {
+	  var taskArray = $(".task-box");
+	  var completedArray = [];
+
+	  taskArray.each(function (i) {
+	    var currentTask = taskArray[i];
+	    if ($(currentTask).prop("class") === "task-box") {
+	      taskArray[i].style.display = "none";
+	    } else {
+	      completedArray.push(taskArray[i]);
+	    }
+	  });
+
+	  return completedArray;
 	};
 
 	var updateVote = function updateVote(taskCard) {
@@ -196,23 +225,27 @@
 	};
 
 	var mainFunction = function mainFunction(obj) {
-	  newIdeaBoxCreator(obj);
+	  newTaskCreator(obj);
 	  localStorage.setItem(obj.id, JSON.stringify(obj));
 	  clearFields();
 	};
 
-	$("#search-box").keyup(function () {
-	  var searchInput = $(this).val();
-	  $("article").each(function () {
-	    var title = $(this).find(".task-title").text();
-	    var body = $(this).find(".task-body").text();
+	$("#search-box").keyup(function (e) {
+	  search($(e.target).val().toLowerCase());
+	});
+
+	var search = function search(searchInput) {
+	  var taskArray = $("article");
+	  taskArray.each(function (e) {
+	    var title = $(taskArray[e]).find(".task-title").text().toLowerCase();
+	    var body = $(taskArray[e]).find(".task-body").text().toLowerCase();
 	    if (title.indexOf(searchInput) < 0 && body.indexOf(searchInput) < 0) {
-	      $(this).hide();
+	      $(taskArray[e]).hide();
 	    } else {
-	      $(this).show();
+	      $(taskArray[e]).show();
 	    }
 	  });
-	});
+	};
 
 	$('.all-input').keyup(function () {
 	  if (inputCheck()) {
@@ -233,6 +266,25 @@
 	  }
 	});
 
+	$('#title-input').keydown(function (e) {
+	  console.log('test');
+	  var titleLim = 60;
+	  var titleLength = $title.val().length;
+
+	  if (titleLength > titleLim) {
+	    e.preventDefault();
+	  }
+	});
+
+	$('#body-input').keydown(function (e) {
+	  var bodyLim = 120;
+	  var bodyLength = $body.val().length;
+
+	  if (bodyLength > bodyLim) {
+	    e.preventDefault();
+	  }
+	});
+
 	var inputCheck = function inputCheck() {
 	  return (/\S/.test($title.val()) && /\S/.test($body.val())
 	  );
@@ -244,19 +296,19 @@
 	  mainFunction(newIdeaObject);
 	});
 
-	$('.task-container').on('click', '.delete-button', function () {
-	  var $selector = $(this).closest(".task-box");
+	$('.task-container').on('click', '.delete-button', function (e) {
+	  var $selector = $(e.target).closest(".task-box");
 	  var id = $selector.attr('id');
 	  localStorage.removeItem(id);
 	  $selector.remove();
 	});
 
-	$('.task-container').on('click', '.up-button, .down-button', function () {
-	  updateVote($(this));
+	$('.task-container').on('click', '.up-button, .down-button', function (e) {
+	  updateVote($(e.target));
 	});
 
-	$('.task-container').on('blur', ".task-title, .task-body", function (event) {
-	  var $selector = $(this).closest(".task-box");
+	$('.task-container').on('blur', ".task-title, .task-body", function (e) {
+	  var $selector = $(e.target).closest(".task-box");
 	  var id = $selector.prop("id");
 	  var storedObj = JSON.parse(localStorage.getItem(id));
 	  storedObj.title = $selector.find(".task-title").text();
@@ -267,26 +319,41 @@
 	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
 	  if (event.keyCode === 13) {
 	    event.preventDefault();
-	    $(this).blur();
+	    $(event.target).blur();
 	    $("#title-input").focus();
 	  }
 	});
 
-	$('.task-container').on('click', '.complete-button', function () {
-	  complete($(this));
+	$('.task-container').on('click', '.complete-button', function (e) {
+	  complete($(e.target), event.type);
 	});
 
 	$("#show-completed-button").on("click", function () {
-	  showCompleted();
+	  showCompletedTasks();
 	});
 
-<<<<<<< HEAD
-=======
-	// $("#show-more-button").on("click", () => {
-	//   showMore();
-	// })
+	$("#show-more-button").on("click", function (e) {
+	  showMoreTasks();
+	});
 
->>>>>>> master
+	$(".filter-buttons-container").on("click", function (e) {
+	  var filter = $(e.target).text();
+	  var storedObjArray = [];
+
+	  $(".task-box").remove();
+
+	  for (var i = 0; localStorage.length > i; i++) {
+	    var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    storedObjArray.push(obj);
+	  }
+
+	  storedObjArray.forEach(function (e) {
+	    if (e.importance === filter) {
+	      newTaskCreator(e);
+	    }
+	  });
+	});
+
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
