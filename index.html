@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,11 +17,24 @@
       </div>
         <button type="button" name="button" id="save-button">save</button>
     </header>
+
     <input type="text" name="name" value="" placeholder="Search" id="search-box">
     <button type="button" name="button" id="show-completed-button">Show Completed 2Do's</button>
     <button type='button' name='button' id='show-more-button'>Show More 2Do's</button>
+
+
+    <section class="filter-buttons-container">
+      <article class="filter-text-container"><span class="filter-text">Importance Filter</span></article>
+      <button id="critical-button" class="filter-button" type="button" name="button">Critical</button>
+      <button id="high-button" class="filter-button"t ype="button" name="button">High</button>
+      <button id="normal-button" class="filter-button" type="button" name="button">Normal</button>
+      <button id="low-button" class="filter-button" type="button" name="button">Low</button>
+      <button id="none-button" class="filter-button" type="button" name="button">None</button>
+    </section>
+
     <section class="task-container">
     </section>
+
     <script src="main.bundle.js"></script>
   </body>
 </html>

@@ -16,6 +16,7 @@ header, h2 {
 header h1 {
   margin: 10px auto;
   font-size: 2.5em;
+  color: #3c3c3c;
 }
 
 article {
@@ -23,15 +24,25 @@ article {
 }
 
 article h2 {
-  display: inline-block;
   font-size: 1.4em;
   padding: 5px 0px;
+  margin-left: 5px;
 }
 
 input, textarea, #save-button, #search-box, #show-completed-button, #show-more-button {
   display: block;
   margin: 20px auto;
   font-size: 1em;
+}
+
+.filter-text-container{
+  border: none;
+}
+
+.filter-text {
+  display: inline-block;
+  border-bottom: 2px solid;
+  margin: 5px;
 }
 
 input, textarea {
@@ -56,7 +67,8 @@ input, textarea {
 p {
   display: block;
   padding: 12px 0px;
-  text-align: left
+  text-align: left;
+  margin-left: 5px;
 }
 
 .flexer {
@@ -68,7 +80,7 @@ margin: 32px;
 }
 
 .task-header {
-  color: #ffc500;
+  color: white;
 }
 
 .importance-container {
@@ -81,14 +93,17 @@ textarea {
 }
 
 .complete-button {
-  background-color: #577590;
-  border: none;
-  color: white;
   float: right;
   margin-right: 5px;
 }
 
-.complete-button:hover {
+.complete-button, .filter-button {
+  background-color: #577590;
+  border: none;
+  color: white;
+}
+
+.complete-button:hover, .complete-button:focus, .filter-button:hover, .filterbutton:focus {
   cursor: pointer;
   background-color: #F2A541;
 }
@@ -123,25 +138,25 @@ textarea {
 .delete-button {
   background: url('../images/delete.svg') no-repeat;
   float: right;
-  margin: auto;
+  margin: 5px 5px 0 0;
 }
 
-#save-button:hover, #show-completed-button:hover, #show-more-button:hover {
+#save-button:hover, #save-button:focus, #show-completed-button:hover, #show-completed-button:focus, #show-more-button:hover, #show-more-button:focus {
   background: #dc7c40;
   cursor: pointer;
 }
 
-.up-button:hover {
+.up-button:hover, .up-button:focus {
   background: url('../images/upvote-hover.svg') no-repeat;
   cursor: pointer;
 }
 
-.down-button:hover {
+.down-button:hover, .down-button:focus {
   background: url('../images/downvote-hover.svg') no-repeat;
   cursor: pointer;
 }
 
-.delete-button:hover {
+.delete-button:hover, .delete-button:focus {
   background: url('../images/delete-hover.svg') no-repeat;
   cursor: pointer;
 }
@@ -169,6 +184,14 @@ textarea {
   color: #577590;
 }
 
+.filter-buttons-container{
+  text-align: center;
+}
+
+.filter-button {
+  display: inline-block;
+  padding: 5px 10px;
+}
 
 :-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: #D0D2D3;
