@@ -71,32 +71,31 @@
 	  return { id: id, title: title, body: body, importance: importance, completed: completed };
 	};
 
-	var newIdeaBoxCreator = function newIdeaBoxCreator(obj) {
-<<<<<<< HEAD
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
-=======
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <h2 class=\'task-title\' contenteditable=\'true\'>' + obj.title + '</h2>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n      </div>\n      <p class=\'task-body\' contenteditable=\'true\'>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n        <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n        <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n        <h4 tabindex="0">importance: </h4>\n        <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n        <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n        <button type=\'button\' name=\'button\' class=\'show-more-button\'>SHOW MORE 2Dos</button>\n      </div>\n  </article>');
->>>>>>> master
+	var newTaskCreator = function newTaskCreator(obj) {
+	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n          <h2 class=\'task-title\' contenteditable>' + obj.title + '</h2>\n      </div>\n      <p class=\'task-body\' contenteditable>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n          <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n          <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n          <h4 tabindex="0">importance: </h4>\n          <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n          <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
 	};
 
 	var deleteIdeaStorage = function deleteIdeaStorage(id) {
 	  localStorage.removeItem(id);
 	};
 
-	var loadStorage = function loadStorage() {
-<<<<<<< HEAD
+	var loadRemainingTasks = function loadRemainingTasks() {
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (!storedObj.completed) newIdeaBoxCreator(storedObj);
-=======
+	    if (!storedObj.completed) {
+	      newTaskCreator(storedObj);
+	    }
+	  }
+	};
+
+	var loadStorage = function loadStorage() {
 	  var storageNumber = 0;
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    if (!storedObj.completed && storageNumber < 10) {
-	      newIdeaBoxCreator(storedObj);
+	      newTaskCreator(storedObj);
 	      storageNumber++;
 	    }
->>>>>>> master
 	  }
 	};
 
@@ -105,7 +104,7 @@
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    if (storedObj.completed) {
 	      (function () {
-	        newIdeaBoxCreator(storedObj);
+	        newTaskCreator(storedObj);
 
 	        var $selector = $(".task-container").find('#' + storedObj.id);
 
@@ -126,13 +125,6 @@
 	  $("#show-completed-button").prop("disabled", true);
 	};
 
-<<<<<<< HEAD
-=======
-	// const showMore = () => {
-	//
-	// }
-
->>>>>>> master
 	var complete = function complete(task) {
 	  var $selector = task.closest(".task-box");
 	  var id = $selector.prop("id");
@@ -169,6 +161,30 @@
 	  $('#save-button').prop('disabled', true);
 	};
 
+	var showMoreTasks = function showMoreTasks() {
+	  var taskArray = $(".task-box");
+	  var completedArray = clearTasks(taskArray);
+	  loadRemainingTasks();
+	  completedArray.forEach(function (i) {
+	    $(".task-container").prepend(i);
+	  });
+	};
+
+	var clearTasks = function clearTasks(taskArray) {
+	  var completedArray = [];
+
+	  taskArray.each(function (i) {
+	    var currentTask = taskArray[i];
+	    if ($(currentTask).prop("class") === "task-box") {
+	      taskArray[i].style.display = "none";
+	    } else {
+	      completedArray.push(taskArray[i]);
+	    }
+	  });
+
+	  return completedArray;
+	};
+
 	var updateVote = function updateVote(taskCard) {
 	  var $selector = taskCard.closest(".task-box");
 	  var $importance = $selector.find('.importance-rating');
@@ -196,23 +212,27 @@
 	};
 
 	var mainFunction = function mainFunction(obj) {
-	  newIdeaBoxCreator(obj);
+	  newTaskCreator(obj);
 	  localStorage.setItem(obj.id, JSON.stringify(obj));
 	  clearFields();
 	};
 
-	$("#search-box").keyup(function () {
-	  var searchInput = $(this).val();
-	  $("article").each(function () {
-	    var title = $(this).find(".task-title").text();
-	    var body = $(this).find(".task-body").text();
+	$("#search-box").keyup(function (e) {
+	  search($(e.target).val());
+	});
+
+	var search = function search(searchInput) {
+	  var taskArray = $("article");
+	  taskArray.each(function (e) {
+	    var title = $(taskArray[e]).find(".task-title").text();
+	    var body = $(taskArray[e]).find(".task-body").text();
 	    if (title.indexOf(searchInput) < 0 && body.indexOf(searchInput) < 0) {
-	      $(this).hide();
+	      $(taskArray[e]).hide();
 	    } else {
-	      $(this).show();
+	      $(taskArray[e]).show();
 	    }
 	  });
-	});
+	};
 
 	$('.all-input').keyup(function () {
 	  if (inputCheck()) {
@@ -244,19 +264,19 @@
 	  mainFunction(newIdeaObject);
 	});
 
-	$('.task-container').on('click', '.delete-button', function () {
-	  var $selector = $(this).closest(".task-box");
+	$('.task-container').on('click', '.delete-button', function (e) {
+	  var $selector = $(e.target).closest(".task-box");
 	  var id = $selector.attr('id');
 	  localStorage.removeItem(id);
 	  $selector.remove();
 	});
 
-	$('.task-container').on('click', '.up-button, .down-button', function () {
-	  updateVote($(this));
+	$('.task-container').on('click', '.up-button, .down-button', function (e) {
+	  updateVote($(e.target));
 	});
 
-	$('.task-container').on('blur', ".task-title, .task-body", function (event) {
-	  var $selector = $(this).closest(".task-box");
+	$('.task-container').on('blur', ".task-title, .task-body", function (e) {
+	  var $selector = $(e.target).closest(".task-box");
 	  var id = $selector.prop("id");
 	  var storedObj = JSON.parse(localStorage.getItem(id));
 	  storedObj.title = $selector.find(".task-title").text();
@@ -267,26 +287,42 @@
 	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
 	  if (event.keyCode === 13) {
 	    event.preventDefault();
-	    $(this).blur();
+	    $(event.target).blur();
 	    $("#title-input").focus();
 	  }
 	});
 
-	$('.task-container').on('click', '.complete-button', function () {
-	  complete($(this));
+	$('.task-container').on('click', '.complete-button', function (e) {
+	  complete($(e.target));
 	});
 
 	$("#show-completed-button").on("click", function () {
 	  showCompleted();
 	});
 
-<<<<<<< HEAD
-=======
-	// $("#show-more-button").on("click", () => {
-	//   showMore();
-	// })
+	$("#show-more-button").on("click", function (e) {
+	  showMoreTasks();
+	  $(e.target).prop("disabled", true);
+	});
 
->>>>>>> master
+	$(".filter-buttons-container").on("click", function (e) {
+	  var filter = $(e.target).text();
+	  var storedObjArray = [];
+
+	  $(".task-box").remove();
+
+	  for (var i = 0; localStorage.length > i; i++) {
+	    var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    storedObjArray.push(obj);
+	  }
+
+	  storedObjArray.forEach(function (e) {
+	    if (e.importance === filter) {
+	      newTaskCreator(e);
+	    }
+	  });
+	});
+
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
