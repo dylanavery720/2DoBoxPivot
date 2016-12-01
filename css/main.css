@@ -16,6 +16,7 @@ header, h2 {
 header h1 {
   margin: 10px auto;
   font-size: 2.5em;
+  color: #3c3c3c;
 }
 
 article {
@@ -32,6 +33,16 @@ input, textarea, #save-button, #search-box, #show-completed-button, #show-more-b
   display: block;
   margin: 20px auto;
   font-size: 1em;
+}
+
+.filter-text-container{
+  border: none;
+}
+
+.filter-text {
+  display: inline-block;
+  border-bottom: 2px solid;
+  margin: 5px;
 }
 
 input, textarea {
@@ -69,7 +80,7 @@ margin: 32px;
 }
 
 .task-header {
-  color: #ffc500;
+  color: white;
 }
 
 .importance-container {
@@ -82,14 +93,17 @@ textarea {
 }
 
 .complete-button {
-  background-color: #577590;
-  border: none;
-  color: white;
   float: right;
   margin-right: 5px;
 }
 
-.complete-button:hover, .complete-button:focus {
+.complete-button, .filter-button {
+  background-color: #577590;
+  border: none;
+  color: white;
+}
+
+.complete-button:hover, .complete-button:focus, .filter-button:hover, .filterbutton:focus {
   cursor: pointer;
   background-color: #F2A541;
 }
@@ -170,6 +184,14 @@ textarea {
   color: #577590;
 }
 
+.filter-buttons-container{
+  text-align: center;
+}
+
+.filter-button {
+  display: inline-block;
+  padding: 5px 10px;
+}
 
 :-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: #D0D2D3;
