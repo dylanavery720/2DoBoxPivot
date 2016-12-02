@@ -8,33 +8,92 @@ header {
   background: $background-color;
   padding: 5px;
   text-align: center;
-}
+  @include main-font;
 
-header, h2 {
-  font-family: $header-font;
-  font-weight: 800;
-}
-
-header h1 {
-  margin: 10px auto;
-  font-size: 2.5em;
-  color: $main-color;
+   h1 {
+     margin: 10px auto;
+     font-size: 2.5em;
+     color: $main-color;
+   }
 }
 
 article {
   border-bottom: 2px solid $under-line-color;
+
+    h2 {
+      font-size: 1.4em;
+      padding: 5px 0px;
+      margin-left: 5px;
+      @include main-font;
+    }
 }
 
-article h2 {
-  font-size: 1.4em;
-  padding: 5px 0px;
+
+p {
+  display: block;
+  padding: 12px 0px;
+  text-align: left;
   margin-left: 5px;
 }
 
-input, textarea, #save-button, #search-box, #show-completed-button, #show-more-button {
-  display: block;
-  margin: 20px auto;
-  font-size: 1em;
+input {
+  @include button-space;
+  @include input-style;
+}
+
+textarea {
+  resize: none;
+  @include button-space;
+  @include input-style;
+}
+
+
+#search-box {
+  width: 88%;
+  @include button-space;
+
+}
+
+#save-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-completed-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-more-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled]{
+    @include disabled-button;
+  }
 }
 
 .filter-text-container{
@@ -47,38 +106,12 @@ input, textarea, #save-button, #search-box, #show-completed-button, #show-more-b
   margin: 5px;
 }
 
-input, textarea {
-  font-family: $body-font;
-  border: 2px solid $under-line-color;
-  padding: 5px;
-  width: 90%;
-}
-
-#search-box {
-  width: 88%;
-}
-
-#save-button, #show-completed-button, #show-more-button {
-  background: $save-button-color;
-  color: $button-text-color;
-  border: none;
-  width: 92%;
-  padding: 5px 0px 7px;
-}
-
-p {
-  display: block;
-  padding: 12px 0px;
-  text-align: left;
-  margin-left: 5px;
-}
-
 .flexer {
   margin-top: 15px;
 }
 
 .task-container {
-margin: 32px;
+  margin: 32px;
 }
 
 .task-header {
@@ -90,94 +123,8 @@ margin: 32px;
   margin-bottom: 15px;
 }
 
-textarea {
-  resize: none;
-}
-
-.complete-button {
-  float: right;
-  margin-right: 5px;
-}
-
-.complete-button, .filter-button {
-  background-color: $background-color;
-  border: none;
-  color: $button-text-color;
-}
-
-.complete-button:hover, .complete-button:focus, .filter-button:hover, .filterbutton:focus {
-  cursor: pointer;
-  background-color: $save-button-color;
-}
-
-#body-input {
-  height: 7em;
-}
-
-.up-button {
-  background: url('../images/upvote.svg') no-repeat;
-  float: left;
-}
-
- .up-button, .delete-button {
-  color: $hidden-color;
-  border: none;
-  height: 30px;
-  width: 30px;
-  margin: -7px;
-}
-
-.down-button {
-  background: url('../images/downvote.svg') no-repeat;
-  color: $hidden-color;
-  border: none;
-  float: left;
-  height: 30px;
-  width: 30px;
-  margin: -7px 12px;
-}
-
-.delete-button {
-  background: url('../images/delete.svg') no-repeat;
-  float: right;
-  margin: 5px 5px 0 0;
-}
-
-#save-button:hover, #save-button:focus, #show-completed-button:hover, #show-completed-button:focus, #show-more-button:hover, #show-more-button:focus {
-  background: $button-hover-color;
-  cursor: pointer;
-}
-
-.up-button:hover, .up-button:focus {
-  background: url('../images/upvote-hover.svg') no-repeat;
-  cursor: pointer;
-}
-
-.down-button:hover, .down-button:focus {
-  background: url('../images/downvote-hover.svg') no-repeat;
-  cursor: pointer;
-}
-
-.delete-button:hover, .delete-button:focus {
-  background: url('../images/delete-hover.svg') no-repeat;
-  cursor: pointer;
-}
-
 .importance-rating, h4 {
   display: inline-block;
-  /*float: left;*/
-}
-
-*:focus {
-  box-shadow: none;
-  outline: 0;
-}
-
-
-
- #save-button[disabled], #show-completed-button[disabled], #show-more-button[disabled] {
- background: $main-color;
- cursor: default;
 }
 
 .completed-task {
@@ -186,14 +133,89 @@ textarea {
   color: $background-color;
 }
 
-.filter-buttons-container{
+.filter-buttons-container {
   text-align: center;
+}
+
+.complete-button {
+  float: right;
+  margin-right: 5px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
 }
 
 .filter-button {
   display: inline-block;
   padding: 5px 10px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
 }
+
+.up-button {
+  background: url('../images/upvote.svg') no-repeat;
+  float: left;
+  margin: -7px;
+  @include button-size;
+  &:hover {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.down-button {
+  background: url('../images/downvote.svg') no-repeat;
+  float: left;
+  margin: -7px 12px;
+  @include button-size;
+  &:hover {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.delete-button {
+  background: url('../images/delete.svg') no-repeat;
+  float: right;
+  margin: 5px 5px 0 0;
+  @include button-size;
+  &:hover {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+#body-input {
+  height: 3em;
+}
+
+*:focus {
+  box-shadow: none;
+  outline: 0;
+}
+
+
 
 :-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: $webkit-placeholder-color;
@@ -207,6 +229,7 @@ textarea {
 :-moz-placeholder { /* Firefox 18- */
   color: $webkit-placeholder-color;
 }
+
 
 @media (min-width: 650px) {
 
