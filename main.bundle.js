@@ -46,24 +46,72 @@
 
 	'use strict';
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var _storage = __webpack_require__(1);
 
-	__webpack_require__(1);
-	__webpack_require__(5);
+	var _taskLoader = __webpack_require__(2);
 
-	var $ = __webpack_require__(13);
+	var _miscFunctions = __webpack_require__(3);
+
+	__webpack_require__(8);
+	__webpack_require__(12);
+
+	var $ = __webpack_require__(5);
+
 
 	$(document).ready(function () {
-	  loadStorage();
+	  var incompleteTasks = [];
+	  var storedObjArray = (0, _storage.storageArray)();
+
+	  storedObjArray.forEach(function (e) {
+	    if (!e.completed) {
+	      incompleteTasks.push(e);
+	    }
+	  });
+
+	  (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
 	  $('#save-button').prop('disabled', true);
 	});
 
-	var $title = $('#title-input');
-	var $body = $('#body-input');
-	var $userSearch = $('#search-box');
-	var $h2 = $('h2');
-	var $p = $('p');
-	var importanceLevel = ["None", "Low", "Normal", "High", "Critical"];
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var storageArray = exports.storageArray = function storageArray() {
+	  var storageArray = [];
+	  for (var i = 0; localStorage.length > i; i++) {
+	    var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+	    storageArray.push(obj);
+	  }
+	  return storageArray;
+	};
+
+	var deleteIdeaStorage = function deleteIdeaStorage(id) {
+	  localStorage.removeItem(id);
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.loadTopTenTasks = exports.newTask = undefined;
+
+	var _miscFunctions = __webpack_require__(3);
+
+	__webpack_require__(7);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var $ = __webpack_require__(5);
 
 	var NewIdea = function NewIdea(id, title, body) {
 	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
@@ -74,32 +122,146 @@
 	  return { id: id, title: title, body: body, importance: importance, completed: completed };
 	};
 
-	var newTaskCreator = function newTaskCreator(obj) {
-	  $('.task-container').prepend('\n    <article id=' + obj.id + ' class=\'task-box\'>\n      <div class=\'flexer\'>\n        <button type=\'button\' name=\'button\' class=\'delete-button\'>DELETE</button>\n          <h2 class=\'task-title\' contenteditable>' + obj.title + '</h2>\n      </div>\n      <p class=\'task-body\' contenteditable>' + obj.body + '</p>\n      <div class=\'importance-container\'>\n          <button type=\'button\' name=\'button\' class=\'up-button\'>UPVOTE</button>\n          <button type=\'button\' name=\'button\' class=\'down-button\'>DOWNVOTE</button>\n          <h4 tabindex="0">importance: </h4>\n          <h4 class=\'importance-rating\' tabindex="0">' + obj.importance + '</h4>\n          <button type=\'button\' name=\'button\' class=\'complete-button\'>COMPLETED TASK</button>\n      </div>\n  </article>');
+	exports.default = NewIdea;
+	var newTask = exports.newTask = function newTask(obj) {
+	  $('.task-container').prepend(createTaskBox(obj));
 	};
 
-	var deleteIdeaStorage = function deleteIdeaStorage(id) {
-	  localStorage.removeItem(id);
+	var loadTask = function loadTask(obj) {
+	  $('.task-container').append(createTaskBox(obj));
+	};
+
+	var createTaskBox = function createTaskBox(obj) {
+	  return "\n    <article id=" + obj.id + " class='task-box'>\n      <div class='flexer'>\n        <button type='button' name='button' class='delete-button'>DELETE</button>\n          <h2 class='task-title' contenteditable>" + obj.title + "</h2>\n      </div>\n      <p class='task-body' contenteditable>" + obj.body + "</p>\n      <div class='importance-container'>\n          <button type='button' name='button' class='up-button'>UPVOTE</button>\n          <button type='button' name='button' class='down-button'>DOWNVOTE</button>\n          <h4 tabindex=\"0\">importance: </h4>\n          <h4 class='importance-rating' tabindex=\"0\">" + obj.importance + "</h4>\n          <button type='button' name='button' class='complete-button'>COMPLETED TASK</button>\n      </div>\n  </article>";
+	};
+
+	var loadTopTenTasks = exports.loadTopTenTasks = function loadTopTenTasks(storedObjArray) {
+	  var numCompletedTasks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+	  var storageNumber = numCompletedTasks;
+	  var displayArray = [];
+
+	  storedObjArray.forEach(function (e) {
+	    if (storageNumber < 10) {
+	      displayArray.push(e);
+	      storageNumber++;
+	    }
+	  });
+	  displayTasks((0, _miscFunctions.sortArray)(displayArray));
 	};
 
 	var loadRemainingTasks = function loadRemainingTasks() {
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    if (!storedObj.completed) {
-	      newTaskCreator(storedObj);
+	      loadTask(storedObj);
 	    }
 	  }
 	};
 
-	var loadStorage = function loadStorage() {
-	  var storageNumber = 0;
+	var displayTasks = function displayTasks(displayArray) {
+	  displayArray.forEach(function (e) {
+	    loadTask(e);
+	  });
+	};
+
+	var showCompletedTasks = function showCompletedTasks() {
+	  var displayedTasksIds = displayedCheck();
+
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    if (!storedObj.completed && storageNumber < 10) {
-	      newTaskCreator(storedObj);
-	      storageNumber++;
+	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
+	    var numCompletedTasks = 0;
+
+	    if (storedObj.completed && idCheck < 0) {
+	      newTask(storedObj);
+	      complete($($(".task-box")[0]));
+	      if (topTen && completedDisplayed && !showCompleteBtnToggle) {
+	        $(".task-box").last().remove();
+	      }
 	    }
 	  }
+	};
+
+	var showMoreTasks = function showMoreTasks() {
+	  var checkboxCheck = $(".filter-buttons-container").children("label");
+	  var storedObjArray = storageArray();
+	  var numCompletedTasks = clearTasks();
+	  var incompleteTasks = getIncompleteTasks(storedObjArray);
+	  var filterArray = [];
+	  var arrayToDisplay = [];
+
+	  checkboxCheck.each(function (e) {
+	    if ($(checkboxCheck[e]).children().is(":checked")) {
+	      filterArray.push($(checkboxCheck[e]).text());
+	    }
+	  });
+
+	  filterArray.forEach(function (e) {
+	    storedObjArray.forEach(function (i) {
+	      if (e === i.importance) {
+	        arrayToDisplay.push(i);
+	      }
+	    });
+	  });
+
+	  if (filterArray.length === 0 && topTen && completedDisplayed) {
+	    loadTopTenTasks((0, _miscFunctions.sortArray)(incompleteTasks), numCompletedTasks);
+	    showCompletedTasks();
+	  } else if (filterArray.length === 0 && !topTen && completedDisplayed) {
+	    displayTasks((0, _miscFunctions.sortArray)(incompleteTasks));
+	    showCompletedTasks();
+	  } else if (filterArray.length === 0 && topTen && !completedDisplayed) {
+	    loadTopTenTasks((0, _miscFunctions.sortArray)(incompleteTasks));
+	  } else if (filterArray.length === 0 && !topTen && !completedDisplayed) {
+	    displayTasks((0, _miscFunctions.sortArray)(incompleteTasks));
+	  } else {
+	    if (topTen) {
+	      loadTopTenTasks((0, _miscFunctions.sortArray)(arrayToDisplay));
+	    } else {
+	      displayTasks((0, _miscFunctions.sortArray)(arrayToDisplay));
+	    }
+	  }
+	};
+
+	var clearTasks = function clearTasks() {
+	  var taskArray = $(".task-box");
+	  var completedArray = 0;
+
+	  taskArray.each(function (i) {
+	    if ($(taskArray[i]).prop("class") !== "task-box") {
+	      completedArray++;
+	    }
+	  });
+
+	  taskArray.remove();
+	  return completedArray;
+	};
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.sortArray = exports.inputCheck = exports.mainFunction = undefined;
+
+	var _globalVars = __webpack_require__(4);
+
+	var globalVars = _interopRequireWildcard(_globalVars);
+
+	var _taskLoader = __webpack_require__(2);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var $ = __webpack_require__(5);
+	var mainFunction = exports.mainFunction = function mainFunction(obj) {
+	  (0, _taskLoader.newTask)(obj);
+	  localStorage.setItem(obj.id, JSON.stringify(obj));
+	  clearFields();
 	};
 
 	var displayedCheck = function displayedCheck() {
@@ -115,672 +277,58 @@
 	  return displayedTasksIds;
 	};
 
-	var showCompletedTasks = function showCompletedTasks() {
-	  var displayedTasksIds = displayedCheck();
-
-	  for (var i = 0; i < localStorage.length; i++) {
-	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
-
-	    if (storedObj.completed && idCheck < 0) {
-	      var task = newTaskCreator(storedObj);
-	      complete($($(".task-box")[0]));
-	    }
-	  }
-	};
-
-	var complete = function complete(task, clickEvent) {
-	  var $selector = task.closest(".task-box");
-	  var id = $selector.prop("id");
-	  var storedObj = JSON.parse(localStorage.getItem(id));
-
-	  $selector.toggleClass("completed-task");
-
-	  var selectorArray = [".task-title, .task-body, h4"];
-	  selectorArray.forEach(function (e) {
-	    $selector.find(e).toggleClass("completed-task");
-	  });
-
-	  var buttonArray = [".up-button, .down-button"];
-	  buttonArray.forEach(function (e) {
-	    if ($selector.find(e).prop("disabled") === false) {
-	      $selector.find(e).prop("disabled", true);
-	    } else {
-	      $selector.find(e).prop("disabled", false);
-	    }
-	  });
-
-	  if (storedObj.completed && clickEvent === "click") {
-	    storedObj.completed = false;
-	  } else {
-	    storedObj.completed = true;
-	  }
-
-	  localStorage.setItem(id, JSON.stringify(storedObj));
-	};
-
-	var clearFields = function clearFields() {
-	  $title.val('');
-	  $body.val('');
-	  $('#save-button').prop('disabled', true);
-	};
-
-	var showMoreTasks = function showMoreTasks() {
-	  var completedArray = clearTasks();
-
-	  for (var i = 0; i < localStorage.length; i++) {
-	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-
-	    if (!storedObj.completed) {
-	      newTaskCreator(storedObj);
-	    }
-
-	    completedArray.sort(function (a, b) {
-	      return a.id - b.id;
-	    });
-
-	    completedArray.forEach(function (i) {
-	      $(".task-container").prepend(i);
-	    });
-	  }
-	};
-
-	var clearTasks = function clearTasks() {
-	  var taskArray = $(".task-box");
-	  var completedArray = [];
-
-	  taskArray.each(function (i) {
-	    var currentTask = taskArray[i];
-	    if ($(currentTask).prop("class") === "task-box") {
-	      taskArray[i].style.display = "none";
-	    } else {
-	      completedArray.push(taskArray[i]);
-	    }
-	  });
-
-	  return completedArray;
-	};
-
-	var updateVote = function updateVote(taskCard) {
-	  var $selector = taskCard.closest(".task-box");
-	  var $importance = $selector.find('.importance-rating');
-	  var buttonPressed = taskCard.text();
-	  var id = $selector.attr('id');
-	  var storedObj = JSON.parse(localStorage.getItem(id));
-	  var currentImportance = storedObj.importance;
-	  var importanceLevelIndex = importanceLevel.indexOf(currentImportance);
-
-	  if (importanceLevelIndex < 4 && buttonPressed === "UPVOTE") {
-	    var index = importanceLevelIndex + 1;
-	    var newImportanceLevel = importanceLevel[index];
-	    $importance.text(newImportanceLevel);
-	    storedObj.importance = newImportanceLevel;
-	  }
-
-	  if (importanceLevelIndex > 0 && buttonPressed === "DOWNVOTE") {
-	    var _index = importanceLevelIndex - 1;
-	    var _newImportanceLevel = importanceLevel[_index];
-	    $importance.text(_newImportanceLevel);
-	    storedObj.importance = _newImportanceLevel;
-	  }
-
-	  localStorage.setItem(id, JSON.stringify(storedObj));
-	};
-
-	var mainFunction = function mainFunction(obj) {
-	  newTaskCreator(obj);
-	  localStorage.setItem(obj.id, JSON.stringify(obj));
-	  clearFields();
-	};
-
-	$("#search-box").keyup(function (e) {
-	  search($(e.target).val().toLowerCase());
-	});
-
-	var search = function search(searchInput) {
-	  var taskArray = $("article");
-	  taskArray.each(function (e) {
-	    var title = $(taskArray[e]).find(".task-title").text().toLowerCase();
-	    var body = $(taskArray[e]).find(".task-body").text().toLowerCase();
-	    if (title.indexOf(searchInput) < 0 && body.indexOf(searchInput) < 0) {
-	      $(taskArray[e]).hide();
-	    } else {
-	      $(taskArray[e]).show();
-	    }
-	  });
-	};
-
-	$('.all-input').keyup(function () {
-	  if (inputCheck()) {
-	    $('#save-button').prop('disabled', false);
-	  } else {
-	    $('#save-button').prop('disabled', true);
-	  }
-	});
-
-	$('.all-input').keypress(function (event) {
-	  if ($body.is(":focus") && event.keyCode === 13) {
-	    event.preventDefault();
-	  }
-
-	  if (event.keyCode === 13 && inputCheck()) {
-	    $('#save-button').click();
-	    $($title.focus());
-	  }
-	});
-
-	$('#title-input').keydown(function (e) {
-	  var titleLim = 60;
-	  var titleLength = $title.val().length;
-
-	  if (titleLength > titleLim) {
-	    e.preventDefault();
-	  }
-	});
-
-	$('#body-input').keydown(function (e) {
-	  var bodyLim = 120;
-	  var bodyLength = $body.val().length;
-
-	  if (bodyLength > bodyLim) {
-	    e.preventDefault();
-	  }
-	});
-
-	var inputCheck = function inputCheck() {
-	  return (/\S/.test($title.val()) && /\S/.test($body.val())
+	var inputCheck = exports.inputCheck = function inputCheck() {
+	  return (/\S/.test(globalVars.$title.val()) && /\S/.test(globalVars.$body.val())
 	  );
 	};
 
-	$('#save-button').on('click', function () {
-	  var val = [Date.now(), $title.val(), $body.val()];
-	  var newIdeaObject = new (Function.prototype.bind.apply(NewIdea, [null].concat(val)))();
-	  mainFunction(newIdeaObject);
-	});
+	var clearFields = function clearFields() {
+	  globalVars.$title.val('');
+	  globalVars.$body.val('');
+	  $('#save-button').prop('disabled', true);
+	};
 
-	$('.task-container').on('click', '.delete-button', function (e) {
-	  var $selector = $(e.target).closest(".task-box");
-	  var id = $selector.attr('id');
-	  localStorage.removeItem(id);
-	  $selector.remove();
-	});
+	var sortArray = exports.sortArray = function sortArray(taskArray) {
+	  taskArray.sort(function (a, b) {
+	    return b.id - a.id;
+	  });
+	  return taskArray;
+	};
 
-	$('.task-container').on('click', '.up-button, .down-button', function (e) {
-	  updateVote($(e.target));
-	});
-
-	$('.task-container').on('blur', ".task-title, .task-body", function (e) {
-	  var $selector = $(e.target).closest(".task-box");
-	  var id = $selector.prop("id");
-	  var storedObj = JSON.parse(localStorage.getItem(id));
-	  storedObj.title = $selector.find(".task-title").text();
-	  storedObj.body = $selector.find(".task-body").text();
-	  localStorage.setItem(id, JSON.stringify(storedObj));
-	});
-
-	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
-	  if (event.keyCode === 13) {
-	    event.preventDefault();
-	    $(event.target).blur();
-	    $("#title-input").focus();
-	  }
-	});
-
-	$('.task-container').on('click', '.complete-button', function (e) {
-	  complete($(e.target), event.type);
-	});
-
-	$("#show-completed-button").on("click", function () {
-	  showCompletedTasks();
-	});
-
-	$("#show-more-button").on("click", function (e) {
-	  showMoreTasks();
-	});
-
-	$(".filter-buttons-container").on("click", function (e) {
-	  var filter = $(e.target).text();
-	  var storedObjArray = [];
-
-	  $(".task-box").remove();
-
-	  for (var i = 0; localStorage.length > i; i++) {
-	    var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-	    storedObjArray.push(obj);
-	  }
+	var getIncompleteTasks = function getIncompleteTasks(storedObjArray) {
+	  var incompleteTasks = [];
 
 	  storedObjArray.forEach(function (e) {
-	    if (e.importance === filter) {
-	      newTaskCreator(e);
+	    if (!e.completed) {
+	      incompleteTasks.push(e);
 	    }
 	  });
-	});
-
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(2);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(4)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./reset.scss", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./reset.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(3)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\n   v2.0 | 20110126\n   License: none (public domain)\n*/\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed,\nfigure, figcaption, footer, header, hgroup,\nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure,\nfooter, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after,\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function () {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for (var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if (item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function (modules, mediaQuery) {
-			if (typeof modules === "string") modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for (var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if (typeof id === "number") alreadyImportedModules[id] = true;
-			}
-			for (i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if (mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if (mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
+	  return incompleteTasks;
 	};
 
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
+	'use strict';
 
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var $ = __webpack_require__(5);
 
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
+	var $title = exports.$title = $('#title-input');
+	var $body = exports.$body = $('#body-input');
+	var $userSearch = exports.$userSearch = $('#search-box');
+	var $h2 = exports.$h2 = $('h2');
+	var $p = exports.$p = $('p');
+	var importanceLevel = exports.importanceLevel = ["None", "Low", "Normal", "High", "Critical"];
+	var topTen = exports.topTen = true;
+	var completedDisplayed = exports.completedDisplayed = false;
+	var showCompleteBtnToggle = exports.showCompleteBtnToggle = false;
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(6);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(4)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./main.scss", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./main.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(3)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "body {\n  font-family: \"Open-Sans\", sans-serif; }\n\nheader {\n  background: #577590;\n  padding: 5px;\n  text-align: center;\n  font-family: \"Roboto-Slab\", serif;\n  font-weight: 800; }\n  header h1 {\n    margin: 10px auto;\n    font-size: 2.5em;\n    color: #3c3c3c; }\n\narticle {\n  border-bottom: 2px solid #D1D3D4; }\n  article h2 {\n    font-size: 1.4em;\n    padding: 5px 0px;\n    margin-left: 5px;\n    font-family: \"Roboto-Slab\", serif;\n    font-weight: 800; }\n\np {\n  display: block;\n  padding: 12px 0px;\n  text-align: left;\n  margin-left: 5px; }\n\ninput {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  font-family: \"Open-Sans\", sans-serif;\n  border: 2px solid #D1D3D4;\n  padding: 5px;\n  width: 90%; }\n\ntextarea {\n  resize: none;\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  font-family: \"Open-Sans\", sans-serif;\n  border: 2px solid #D1D3D4;\n  padding: 5px;\n  width: 90%; }\n\n#search-box {\n  width: 88%;\n  display: block;\n  margin: 20px auto;\n  font-size: 1em; }\n\n#save-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #save-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #save-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #save-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n#show-completed-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #show-completed-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-completed-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-completed-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n#show-more-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #show-more-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-more-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-more-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n.filter-text-container {\n  border: none; }\n\n.filter-text {\n  display: inline-block;\n  border-bottom: 2px solid;\n  margin: 5px; }\n\n.flexer {\n  margin-top: 15px; }\n\n.task-container {\n  margin: 32px; }\n\n.task-header {\n  color: #FFFFFF; }\n\n.importance-container {\n  padding: 15px 0px 10px 8px;\n  margin-bottom: 15px; }\n\n.importance-rating, h4 {\n  display: inline-block; }\n\n.completed-task {\n  background-color: #e3e3e3;\n  text-decoration: line-through;\n  color: #577590; }\n\n.filter-buttons-container {\n  text-align: center; }\n\n.complete-button {\n  float: right;\n  margin-right: 5px;\n  background-color: #577590;\n  border: none;\n  color: #FFFFFF; }\n  .complete-button:hover {\n    cursor: pointer;\n    background-color: #F2A541; }\n  .complete-button:focus {\n    cursor: pointer;\n    background-color: #F2A541; }\n\n.filter-button {\n  display: inline-block;\n  padding: 5px 10px;\n  background-color: #577590;\n  border: none;\n  color: #FFFFFF; }\n  .filter-button:hover {\n    cursor: pointer;\n    background-color: #F2A541; }\n  .filter-button:focus {\n    cursor: pointer;\n    background-color: #F2A541; }\n\n.up-button {\n  background: url(" + __webpack_require__(7) + ") no-repeat;\n  float: left;\n  margin: -7px;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .up-button:hover {\n    background: url(" + __webpack_require__(8) + ") no-repeat;\n    cursor: pointer; }\n  .up-button:focus {\n    background: url(" + __webpack_require__(8) + ") no-repeat;\n    cursor: pointer; }\n\n.down-button {\n  background: url(" + __webpack_require__(9) + ") no-repeat;\n  float: left;\n  margin: -7px 12px;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .down-button:hover {\n    background: url(" + __webpack_require__(10) + ") no-repeat;\n    cursor: pointer; }\n  .down-button:focus {\n    background: url(" + __webpack_require__(10) + ") no-repeat;\n    cursor: pointer; }\n\n.delete-button {\n  background: url(" + __webpack_require__(11) + ") no-repeat;\n  float: right;\n  margin: 5px 5px 0 0;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .delete-button:hover {\n    background: url(" + __webpack_require__(12) + ") no-repeat;\n    cursor: pointer; }\n  .delete-button:focus {\n    background: url(" + __webpack_require__(12) + ") no-repeat;\n    cursor: pointer; }\n\n#body-input {\n  height: 3em; }\n\n*:focus {\n  box-shadow: none;\n  outline: 0; }\n\n:-webkit-input-placeholder {\n  /* Chrome/Opera/Safari */\n  color: #D0D2D3; }\n\n:-moz-placeholder {\n  /* Firefox 19+ */\n  color: #D0D2D3; }\n\n:-ms-input-placeholder {\n  /* IE 10+ */\n  color: #D0D2D3; }\n\n:-moz-placeholder {\n  /* Firefox 18- */\n  color: #D0D2D3; }\n\n@media (min-width: 650px) {\n  input, textarea {\n    width: 60%; }\n  .task-container {\n    width: 60%;\n    margin: 0px auto; }\n  #save-button, #show-completed-button, #show-more-button {\n    width: 61.5%; }\n  #search-box {\n    width: 59%; } }\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='6.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='5.8,10 6.6,10.6 9.9,7 13.3,10.6 14,10 9.9,5.6 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%2339B54A;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='6.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='5.8,10 6.6,10.6 9.9,7 13.3,10.6 14,10 9.9,5.6 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='5.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='14,10 13.3,9.4 9.9,13 6.6,9.4 5.8,10 9.9,14.4 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23FBB040;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='5.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='14,10 13.3,9.4 9.9,13 6.6,9.4 5.8,10 9.9,14.4 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='5.7' y='9.5' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9559)' class='st1' width='8.5' height='1'/%3E %3Crect x='9.4' y='5.7' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9559)' class='st1' width='1' height='8.5'/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23EF4136;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='5.7' y='9.5' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.956)' class='st1' width='8.5' height='1'/%3E %3Crect x='9.4' y='5.7' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.956)' class='st1' width='1' height='8.5'/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
-
-/***/ },
-/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {"use strict";var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};/*!
@@ -2428,10 +1976,10 @@
 	// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 	// and CommonJS for browser emulators (#13566)
 	if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ },
-/* 14 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2446,6 +1994,630 @@
 		}
 		return module;
 	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _globalVars = __webpack_require__(4);
+
+	var globalVars = _interopRequireWildcard(_globalVars);
+
+	var _miscFunctions = __webpack_require__(3);
+
+	var _taskLoader = __webpack_require__(2);
+
+	var _taskLoader2 = _interopRequireDefault(_taskLoader);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var $ = __webpack_require__(5);
+
+
+	$("#search-box").keyup(function (e) {
+	  search($(e.target).val().toLowerCase());
+	});
+
+	$('.all-input').keyup(function () {
+	  if ((0, _miscFunctions.inputCheck)()) {
+	    $('#save-button').prop('disabled', false);
+	  } else {
+	    $('#save-button').prop('disabled', true);
+	  }
+	});
+
+	$('.all-input').keypress(function (event) {
+	  if (globalVars.$body.is(":focus") && event.keyCode === 13) {
+	    event.preventDefault();
+	  }
+
+	  if (event.keyCode === 13 && (0, _miscFunctions.inputCheck)()) {
+	    $('#save-button').click();
+	    $(globalVars.$title.focus());
+	  }
+	});
+
+	$('#title-input').keydown(function (e) {
+	  var titleLim = 60;
+	  var titleLength = globalVars.$title.val().length;
+
+	  if (titleLength > titleLim) {
+	    e.preventDefault();
+	  }
+	});
+
+	$('#body-input').keydown(function (e) {
+	  var bodyLim = 120;
+	  var bodyLength = globalVars.$body.val().length;
+
+	  if (bodyLength > bodyLim) {
+	    e.preventDefault();
+	  }
+	});
+
+	$('#save-button').on('click', function () {
+	  var val = [Date.now(), globalVars.$title.val(), globalVars.$body.val()];
+	  var newIdeaObject = new (Function.prototype.bind.apply(_taskLoader2.default, [null].concat(val)))();
+	  (0, _miscFunctions.mainFunction)(newIdeaObject);
+	});
+
+	$('.task-container').on('click', '.delete-button', function (e) {
+	  var $selector = $(e.target).closest(".task-box");
+	  var id = $selector.attr('id');
+	  localStorage.removeItem(id);
+	  $selector.remove();
+	});
+
+	$('.task-container').on('click', '.up-button, .down-button', function (e) {
+	  updateVote($(e.target));
+	});
+
+	$('.task-container').on('blur', ".task-title, .task-body", function (e) {
+	  var $selector = $(e.target).closest(".task-box");
+	  var id = $selector.prop("id");
+	  var storedObj = JSON.parse(localStorage.getItem(id));
+	  storedObj.title = $selector.find(".task-title").text();
+	  storedObj.body = $selector.find(".task-body").text();
+	  localStorage.setItem(id, JSON.stringify(storedObj));
+	});
+
+	$('.task-container').on('keypress', '.task-title, .task-body', function (event) {
+	  if (event.keyCode === 13) {
+	    event.preventDefault();
+	    $(event.target).blur();
+	    $("#title-input").focus();
+	  }
+	});
+
+	$('.task-container').on('click', '.complete-button', function (e) {
+	  complete($(e.target), event.type);
+	});
+
+	$("#show-completed-button").on("click", function () {
+	  var arrayToDisplay = [];
+	  var incompleteTasks = getIncompleteTasks(storageArray());
+
+	  if (completedDisplayed && topTen) {
+	    clearTasks();
+	    incompleteTasks.forEach(function (i) {
+	      if (!i.completed) {
+	        arrayToDisplay.push(i);
+	      }
+	    });
+	    loadTopTenTasks(sortArray(arrayToDisplay));
+	    completedDisplayed = false;
+	  } else if (completedDisplayed && !topTen) {
+	    clearTasks();
+	    incompleteTasks.forEach(function (i) {
+	      if (!i.completed) {
+	        arrayToDisplay.push(i);
+	      }
+	    });
+	    displayTasks(sortArray(arrayToDisplay));
+	    completedDisplayed = false;
+	  } else {
+	    completedDisplayed = true;
+	    showCompletedTasks();
+	  }
+
+	  if (!showCompleteBtnToggle) {
+	    showCompleteBtnToggle = true;
+	  } else {
+	    showCompleteBtnToggle = false;
+	  }
+	});
+
+	$("#show-more-button").on("click", function () {
+	  showCompleteBtnToggle = true;
+	  if (topTen) {
+	    topTen = false;
+	  } else {
+	    topTen = true;
+	  }
+	  showMoreTasks();
+	});
+
+	$(".filter-buttons-container").on("click", function (e) {
+	  var checkboxCheck = $(".filter-buttons-container").children("label");
+	  var incompleteTasks = getIncompleteTasks(storageArray());
+	  var numCompletedTasks = clearTasks();
+	  var filterArray = [];
+	  var arrayToDisplay = [];
+
+	  $(".task-box").remove();
+	  completedDisplayed = false;
+
+	  checkboxCheck.each(function (e) {
+	    if ($(checkboxCheck[e]).children().is(":checked")) {
+	      filterArray.push($(checkboxCheck[e]).text());
+	    }
+	  });
+
+	  filterArray.forEach(function (e) {
+	    incompleteTasks.forEach(function (i) {
+	      if (e === i.importance) {
+	        arrayToDisplay.push(i);
+	      }
+	    });
+	  });
+
+	  if (filterArray.length === 0 && topTen && completedDisplayed) {
+	    loadTopTenTasks(sortArray(incompleteTasks), numCompletedTasks);
+	    showCompletedTasks();
+	  } else if (filterArray.length === 0 && !topTen && completedDisplayed) {
+	    displayTasks(sortArray(incompleteTasks));
+	    showCompletedTasks();
+	  } else if (filterArray.length === 0 && topTen && !completedDisplayed) {
+	    loadTopTenTasks(sortArray(incompleteTasks));
+	  } else if (filterArray.length === 0 && !topTen && !completedDisplayed) {
+	    displayTasks(sortArray(incompleteTasks));
+	  } else {
+	    if (topTen) {
+	      loadTopTenTasks(sortArray(arrayToDisplay));
+	    } else {
+	      displayTasks(sortArray(arrayToDisplay));
+	    }
+	  }
+
+	  // if(filterArray.length === 0 && topTen && !completedDisplayed){
+	  //   loadTopTenTasks(sortArray(incompleteTasks));
+	  // } else if (filterArray.length === 0 && !topTen && !completedDisplayed){
+	  //   displayTasks(sortArray(incompleteTasks));
+	  // } else {
+	  //   if(topTen){
+	  //     loadTopTenTasks(sortArray(arrayToDisplay));
+	  //   } else {
+	  //     displayTasks(sortArray(arrayToDisplay));
+	  //   }
+	  // }
+	});
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(9);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(11)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./reset.scss", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./reset.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(10)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\n   v2.0 | 20110126\n   License: none (public domain)\n*/\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed,\nfigure, figcaption, footer, header, hgroup,\nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure,\nfooter, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after,\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function () {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for (var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if (item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function (modules, mediaQuery) {
+			if (typeof modules === "string") modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for (var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if (typeof id === "number") alreadyImportedModules[id] = true;
+			}
+			for (i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if (mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if (mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(13);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(11)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./main.scss", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./main.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(10)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "body {\n  font-family: \"Open-Sans\", sans-serif; }\n\nheader {\n  background: #577590;\n  padding: 5px;\n  position: fixed;\n  height: 100%;\n  width: 30%;\n  text-align: center;\n  font-family: \"Roboto-Slab\", serif;\n  font-weight: 800; }\n  header h1 {\n    margin: 10px auto;\n    font-size: 2.5em;\n    color: #3c3c3c; }\n\narticle {\n  border-bottom: 2px solid #D1D3D4; }\n  article h2 {\n    font-size: 1.4em;\n    padding: 5px 0px;\n    margin-left: 5px;\n    font-family: \"Roboto-Slab\", serif;\n    font-weight: 800; }\n\np {\n  display: block;\n  padding: 12px 0px;\n  text-align: left;\n  margin-left: 5px; }\n\n#title-input {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  font-family: \"Open-Sans\", sans-serif;\n  border: 2px solid #D1D3D4;\n  padding: 5px;\n  width: 90%; }\n\ntextarea {\n  resize: none;\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  font-family: \"Open-Sans\", sans-serif;\n  border: 2px solid #D1D3D4;\n  padding: 5px;\n  width: 90%; }\n\n#search-box {\n  width: 88%;\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  font-family: \"Open-Sans\", sans-serif;\n  border: 2px solid #D1D3D4;\n  padding: 5px;\n  width: 90%; }\n\n#save-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #save-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #save-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #save-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n#show-completed-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #show-completed-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-completed-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-completed-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n#show-more-button {\n  display: block;\n  margin: 20px auto;\n  font-size: 1em;\n  background: #F2A541;\n  color: #FFFFFF;\n  border: none;\n  width: 92%;\n  padding: 5px 0px 7px; }\n  #show-more-button:hover {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-more-button:focus {\n    background: #dc7c40;\n    cursor: pointer; }\n  #show-more-button[disabled] {\n    background: #3c3c3c;\n    cursor: default; }\n\n.filter-text-container {\n  border: none; }\n\n.filter-text {\n  display: inline-block;\n  border-bottom: 2px solid;\n  margin: 5px; }\n\n.flexer {\n  margin-top: 15px; }\n\n.task-container {\n  margin: 32px; }\n\n.task-header {\n  color: #FFFFFF; }\n\n.importance-container {\n  padding: 15px 0px 10px 8px;\n  margin-bottom: 15px; }\n\n.importance-rating, h4 {\n  display: inline-block; }\n\n.completed-task {\n  background-color: #e3e3e3;\n  text-decoration: line-through;\n  color: #577590; }\n\n.filter-buttons-container {\n  text-align: center; }\n\n.right-container {\n  position: absolute;\n  width: 70%;\n  right: 0; }\n\n.complete-button {\n  float: right;\n  margin-right: 5px;\n  background-color: #577590;\n  border: none;\n  color: #FFFFFF; }\n  .complete-button:hover {\n    cursor: pointer;\n    background-color: #F2A541; }\n  .complete-button:focus {\n    cursor: pointer;\n    background-color: #F2A541; }\n\n.filter-button {\n  display: inline-block;\n  padding: 5px 10px;\n  background-color: #577590;\n  border: none;\n  color: #FFFFFF; }\n  .filter-button:hover {\n    cursor: pointer;\n    background-color: #F2A541; }\n  .filter-button:focus {\n    cursor: pointer;\n    background-color: #F2A541; }\n\n.up-button {\n  background: url(" + __webpack_require__(14) + ") no-repeat;\n  float: left;\n  margin: -7px;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .up-button:hover {\n    background: url(" + __webpack_require__(15) + ") no-repeat;\n    cursor: pointer; }\n  .up-button:focus {\n    background: url(" + __webpack_require__(15) + ") no-repeat;\n    cursor: pointer; }\n\n.down-button {\n  background: url(" + __webpack_require__(16) + ") no-repeat;\n  float: left;\n  margin: -7px 12px;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .down-button:hover {\n    background: url(" + __webpack_require__(17) + ") no-repeat;\n    cursor: pointer; }\n  .down-button:focus {\n    background: url(" + __webpack_require__(17) + ") no-repeat;\n    cursor: pointer; }\n\n.delete-button {\n  background: url(" + __webpack_require__(18) + ") no-repeat;\n  float: right;\n  margin: 5px 5px 0 0;\n  border: none;\n  color: transparent;\n  height: 30px;\n  width: 30px; }\n  .delete-button:hover {\n    background: url(" + __webpack_require__(19) + ") no-repeat;\n    cursor: pointer; }\n  .delete-button:focus {\n    background: url(" + __webpack_require__(19) + ") no-repeat;\n    cursor: pointer; }\n\n#body-input {\n  height: 7em; }\n\n*:focus {\n  box-shadow: none;\n  outline: 0; }\n\n:-webkit-input-placeholder {\n  /* Chrome/Opera/Safari */\n  color: #D0D2D3; }\n\n:-moz-placeholder {\n  /* Firefox 19+ */\n  color: #D0D2D3; }\n\n:-ms-input-placeholder {\n  /* IE 10+ */\n  color: #D0D2D3; }\n\n:-moz-placeholder {\n  /* Firefox 18- */\n  color: #D0D2D3; }\n\n@media (min-width: 1110px) {\n  #body-input {\n    height: 3em; }\n  #title-input, textarea {\n    width: 60%; }\n  header {\n    width: 50%; }\n  .task-container {\n    width: 60%;\n    margin: 0px auto; }\n  .right-container {\n    width: 50%; }\n  #save-button, #show-completed-button, #show-more-button {\n    width: 61.5%; }\n  #search-box {\n    width: 59%; } }\n\n@media (min-width: 700px) {\n  #body-input {\n    height: 3em; }\n  header {\n    width: 50%; }\n  #title-input, textarea {\n    width: 90%; }\n  .task-container {\n    width: 90%;\n    margin: 0px auto; }\n  .right-container {\n    width: 50%; }\n  #save-button, #show-completed-button, #show-more-button {\n    width: 61.5%; }\n  #search-box {\n    width: 59%; } }\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='6.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='5.8,10 6.6,10.6 9.9,7 13.3,10.6 14,10 9.9,5.6 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%2339B54A;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='6.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='5.8,10 6.6,10.6 9.9,7 13.3,10.6 14,10 9.9,5.6 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='5.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='14,10 13.3,9.4 9.9,13 6.6,9.4 5.8,10 9.9,14.4 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23FBB040;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='9.4' y='5.6' class='st1' width='1' height='7.8'/%3E %3Cg%3E %3Cpolygon class='st1' points='14,10 13.3,9.4 9.9,13 6.6,9.4 5.8,10 9.9,14.4 '/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23D1D3D4;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='5.7' y='9.5' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9559)' class='st1' width='8.5' height='1'/%3E %3Crect x='9.4' y='5.7' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9559)' class='st1' width='1' height='8.5'/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = "\"data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 20 20' style='enable-background:new 0 0 20 20;' xml:space='preserve'%3E %3Cstyle type='text/css'%3E .st0%7Bfill:%23EF4136;%7D .st1%7Bfill:%23FFFFFF;%7D %3C/style%3E %3Cg%3E %3Cg%3E %3Cellipse transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.9558)' class='st0' cx='9.9' cy='10' rx='8.7' ry='8.7'/%3E %3Cg%3E %3Crect x='5.7' y='9.5' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.956)' class='st1' width='8.5' height='1'/%3E %3Crect x='9.4' y='5.7' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -4.1604 9.956)' class='st1' width='1' height='8.5'/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3C/svg%3E\""
 
 /***/ }
 /******/ ]);
