@@ -41,10 +41,12 @@ p {
   margin-left: 5px;
 }
 
-input {
+#title-input {
   @include button-space;
   @include input-style;
 }
+
+
 
 textarea {
   resize: none;
@@ -56,7 +58,7 @@ textarea {
 #search-box {
   width: 88%;
   @include button-space;
-
+  @include input-style;
 }
 
 #save-button {
@@ -248,7 +250,7 @@ textarea {
     height: 3em;
   }
 
-  input, textarea {
+  #title-input, textarea {
     width: 60%;
   }
 
@@ -287,7 +289,7 @@ textarea {
     width: 50%;
   }
 
-  input, textarea {
+  #title-input, textarea {
     width: 90%;
   }
 
