@@ -1,0 +1,73 @@
+// Fonts
+
+$body-font: "Open-Sans", sans-serif;
+$header-font: "Roboto-Slab", serif;
+
+// Colors
+
+$background-color: #577590;
+$main-color: #3c3c3c;
+$under-line-color: #D1D3D4;
+$save-button-color: #F2A541;
+$button-text-color: #FFFFFF;
+$button-hover-color: #dc7c40;
+$hidden-color: rgba(0,0,0,0);
+$webkit-placeholder-color: #D0D2D3;
+$completed-task-color: #e3e3e3;
+
+
+// Mixins
+
+@mixin button-size {
+  border: none;
+  color: $hidden-color;
+  height: 30px;
+  width: 30px;
+}
+
+@mixin button-space {
+  display: block;
+  margin: 20px auto;
+  font-size: 1em;
+}
+
+@mixin button-coloring {
+  background: $save-button-color;
+  color: $button-text-color;
+  border: none;
+  width: 92%;
+  padding: 5px 0px 7px;
+}
+
+@mixin button-focus {
+  cursor: pointer;
+  background-color: $save-button-color;
+}
+
+@mixin button-hover {
+  background: $button-hover-color;
+  cursor: pointer;
+}
+
+@mixin secondary-button-coloring {
+  background-color: $background-color;
+  border: none;
+  color: $button-text-color;
+}
+
+@mixin disabled-button {
+  background: $main-color;
+  cursor: default;
+}
+
+@mixin input-style {
+  font-family: $body-font;
+  border: 2px solid $under-line-color;
+  padding: 5px;
+  width: 90%;
+}
+
+@mixin main-font {
+  font-family: $header-font;
+  font-weight: 800;
+}

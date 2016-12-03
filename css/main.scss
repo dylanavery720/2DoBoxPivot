@@ -1,0 +1,311 @@
+@import 'scss/variables.scss';
+
+body {
+  font-family: $body-font;
+}
+
+header {
+  background: $background-color;
+  padding: 5px;
+  position: fixed;
+  height: 100%;
+
+
+  width: 30%;
+  text-align: center;
+  @include main-font;
+
+   h1 {
+     margin: 10px auto;
+     font-size: 2.5em;
+     color: $main-color;
+   }
+}
+
+article {
+  border-bottom: 2px solid $under-line-color;
+
+    h2 {
+      font-size: 1.4em;
+      padding: 5px 0px;
+      margin-left: 5px;
+      @include main-font;
+    }
+}
+
+
+p {
+  display: block;
+  padding: 12px 0px;
+  text-align: left;
+  margin-left: 5px;
+}
+
+input {
+  @include button-space;
+  @include input-style;
+}
+
+textarea {
+  resize: none;
+  @include button-space;
+  @include input-style;
+}
+
+
+#search-box {
+  width: 88%;
+  @include button-space;
+
+}
+
+#save-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-completed-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-more-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled]{
+    @include disabled-button;
+  }
+}
+
+.filter-text-container{
+  border: none;
+}
+
+.filter-text {
+  display: inline-block;
+  border-bottom: 2px solid;
+  margin: 5px;
+}
+
+.flexer {
+  margin-top: 15px;
+}
+
+.task-container {
+  margin: 32px;
+}
+
+.task-header {
+  color: $button-text-color;
+}
+
+.importance-container {
+  padding: 15px 0px 10px 8px;
+  margin-bottom: 15px;
+}
+
+.importance-rating, h4 {
+  display: inline-block;
+}
+
+.completed-task {
+  background-color: $completed-task-color;
+  text-decoration: line-through;
+  color: $background-color;
+}
+
+.filter-buttons-container {
+  text-align: center;
+}
+
+.right-container {
+  position: absolute;
+  width: 70%;
+  right: 0;
+}
+
+.complete-button {
+  float: right;
+  margin-right: 5px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
+}
+
+.filter-button {
+  display: inline-block;
+  padding: 5px 10px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
+}
+
+.up-button {
+  background: url('../images/upvote.svg') no-repeat;
+  float: left;
+  margin: -7px;
+  @include button-size;
+  &:hover {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.down-button {
+  background: url('../images/downvote.svg') no-repeat;
+  float: left;
+  margin: -7px 12px;
+  @include button-size;
+  &:hover {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.delete-button {
+  background: url('../images/delete.svg') no-repeat;
+  float: right;
+  margin: 5px 5px 0 0;
+  @include button-size;
+  &:hover {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+#body-input {
+  height: 7em;
+}
+
+*:focus {
+  box-shadow: none;
+  outline: 0;
+}
+
+
+
+:-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: $webkit-placeholder-color;
+}
+:-moz-placeholder { /* Firefox 19+ */
+  color: $webkit-placeholder-color;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: $webkit-placeholder-color;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: $webkit-placeholder-color;
+}
+
+
+@media (min-width: 1110px) {
+
+  #body-input {
+    height: 3em;
+  }
+
+  input, textarea {
+    width: 60%;
+  }
+
+  header {
+    width: 50%;
+  }
+
+  .task-container {
+    width: 60%;
+    margin: 0px auto;
+  }
+
+  .right-container {
+    width: 50%;
+  }
+
+
+
+  #save-button, #show-completed-button, #show-more-button {
+      width: 61.5%;
+  }
+
+  #search-box {
+    width: 59%;
+  }
+
+}
+
+@media (min-width: 700px) {
+
+  #body-input {
+    height: 3em;
+  }
+
+  header {
+    width: 50%;
+  }
+
+  input, textarea {
+    width: 90%;
+  }
+
+  .task-container {
+    width: 90%;
+    margin: 0px auto;
+  }
+
+  .right-container {
+    width: 50%;
+  }
+
+  #save-button, #show-completed-button, #show-more-button {
+      width: 61.5%;
+  }
+
+  #search-box {
+    width: 59%;
+  }
+
+}
