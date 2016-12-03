@@ -7,6 +7,11 @@ body {
 header {
   background: $background-color;
   padding: 5px;
+  position: fixed;
+  height: 100%;
+
+
+  width: 30%;
   text-align: center;
   @include main-font;
 
@@ -137,6 +142,12 @@ textarea {
   text-align: center;
 }
 
+.right-container {
+  position: absolute;
+  width: 70%;
+  right: 0;
+}
+
 .complete-button {
   float: right;
   margin-right: 5px;
@@ -207,7 +218,7 @@ textarea {
 }
 
 #body-input {
-  height: 3em;
+  height: 7em;
 }
 
 *:focus {
@@ -231,23 +242,70 @@ textarea {
 }
 
 
-@media (min-width: 650px) {
+@media (min-width: 1110px) {
 
-input, textarea {
-  width: 60%;
+  #body-input {
+    height: 3em;
+  }
+
+  input, textarea {
+    width: 60%;
+  }
+
+  header {
+    width: 50%;
+  }
+
+  .task-container {
+    width: 60%;
+    margin: 0px auto;
+  }
+
+  .right-container {
+    width: 50%;
+  }
+
+
+
+  #save-button, #show-completed-button, #show-more-button {
+      width: 61.5%;
+  }
+
+  #search-box {
+    width: 59%;
+  }
+
 }
 
-.task-container {
-  width: 60%;
-  margin: 0px auto;
-}
+@media (min-width: 700px) {
 
-#save-button, #show-completed-button, #show-more-button {
-    width: 61.5%;
-}
+  #body-input {
+    height: 3em;
+  }
 
-#search-box {
-  width: 59%;
-}
+  header {
+    width: 50%;
+  }
+
+  input, textarea {
+    width: 90%;
+  }
+
+  .task-container {
+    width: 90%;
+    margin: 0px auto;
+  }
+
+  .right-container {
+    width: 50%;
+  }
+
+  #save-button, #show-completed-button, #show-more-button {
+      width: 61.5%;
+  }
+
+  #search-box {
+    width: 59%;
+  }
 
 }
