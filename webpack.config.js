@@ -13,7 +13,8 @@ module.exports = {
     loaders: [
       { test: /\.js$/, exclude: '/node_modules/', loader: 'babel-loader', query: { presets: ['babel-preset-es2015'] } },
       { test: /\.css$/, loader: "style!css" },
-      { test: /\.scss$/, loader: "style!css!sass" }
+      { test: /\.scss$/, loader: "style!css!sass" },
+      { test: /\.svg$/, loader: 'svg-url-loader' }
     ]
   },
   resolve: {
