@@ -1,7 +1,30 @@
-const assert = require('chai').assert
+const assert    = require('assert');
+const webdriver = require('selenium-webdriver');
+const test      = require('selenium-webdriver/testing')
 
-describe('our test bundle', function () {
-  it('should work', function () {
-    assert(true)
+test.describe('testing ideabox',()=>{
+  this.timeout(10000)
+  test.it('should allow me to add a title and a description', ()=>{
+    const driver = new webdriver.Builder()
+    .forBrowser('chrome')
+    .build();
+
+    driver.get('http://localhost:3000');
+
+    const title = driver.findElement({name: 'title'})
+    const description = driver.findElement({name: 'description'})
+    title.sendKeys('this is a title').then(()=>{
+      return title.getAttribute('value')
+    }).then((value)=>{
+      assert.equal(value, 'this is a title')
     })
+
+    description.sendKeys('this is a description').then(()=>{
+      return description.getAttribute('value')
+    }).then((value)=>{
+      assert.equal(value, 'this is a description')
+    })
+
+    driver.quit()
   })
+})
