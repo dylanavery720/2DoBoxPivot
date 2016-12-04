@@ -142,7 +142,7 @@
 	};
 
 	var createTaskBox = function createTaskBox(obj) {
-	  return "\n    <article id=" + obj.id + " class='task-box'>\n      <div class='flexer'>\n        <button type='button' name='button' class='delete-button'>DELETE</button>\n          <h2 class='task-title' contenteditable>" + obj.title + "</h2>\n      </div>\n      <p class='task-body' contenteditable>" + obj.body + "</p>\n      <div class='importance-container'>\n          <button type='button' name='button' class='up-button'>UPVOTE</button>\n          <button type='button' name='button' class='down-button'>DOWNVOTE</button>\n          <h4 tabindex=\"0\">importance: </h4>\n          <h4 class='importance-rating' tabindex=\"0\">" + obj.importance + "</h4>\n          <button type='button' name='button' class='complete-button'>COMPLETED TASK</button>\n      </div>\n  </article>";
+	  return "\n    <article id=" + obj.id + " class='task-box'>\n      <div class='flexer'>\n        <button type='button' name='button' class='delete-button'>DELETE</button>\n          <h2 class='task-title' name='task-title' contenteditable>" + obj.title + "</h2>\n      </div>\n      <p class='task-body' name='task-body' contenteditable>" + obj.body + "</p>\n      <div class='importance-container'>\n          <button type='button' name='button' class='up-button'>UPVOTE</button>\n          <button type='button' name='button' class='down-button'>DOWNVOTE</button>\n          <h4 tabindex=\"0\">importance: </h4>\n          <h4 class='importance-rating' tabindex=\"0\">" + obj.importance + "</h4>\n          <button type='button' name='button' class='complete-button'>COMPLETED TASK</button>\n      </div>\n  </article>";
 	};
 
 	var loadTopTenTasks = exports.loadTopTenTasks = function loadTopTenTasks(storedObjArray) {
