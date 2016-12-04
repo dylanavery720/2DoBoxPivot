@@ -22,8 +22,10 @@ module.exports = {
   },
 
   node: {
-    fs: "empty",
-    child_process: "empty",
-    net: "empty"
-  }
+        fs: 'empty',
+        child_process: 'empty',
+        readline: 'empty',
+        net: 'empty'
+
+      }
 }

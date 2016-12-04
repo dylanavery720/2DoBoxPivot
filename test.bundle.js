@@ -493,14 +493,14 @@
 	var test = __webpack_require__(327);
 
 	test.describe('testing ideabox', function () {
-	  undefined.timeout(10000);
+	  this.timeout(10000);
 	  test.it('should allow me to add a title and a description', function () {
 	    var driver = new webdriver.Builder().forBrowser('chrome').build();
 
-	    driver.get('http://localhost:3000');
+	    driver.get('http://localhost:8080');
 
 	    var title = driver.findElement({ name: 'title' });
-	    var description = driver.findElement({ name: 'description' });
+	    var description = driver.findElement({ name: 'body' });
 	    title.sendKeys('this is a title').then(function () {
 	      return title.getAttribute('value');
 	    }).then(function (value) {
@@ -511,6 +511,55 @@
 	      return description.getAttribute('value');
 	    }).then(function (value) {
 	      assert.equal(value, 'this is a description');
+	    });
+
+	    driver.quit();
+	  });
+
+	  test.it('should allow me to submit a task', function () {
+	    var driver = new webdriver.Builder().forBrowser('chrome').build();
+
+	    driver.get('http://localhost:8080');
+
+	    var title = driver.findElement({ name: 'title' });
+	    var description = driver.findElement({ name: 'body' });
+	    var save = driver.findElement({ name: 'save-button' });
+
+	    title.sendKeys('this is a title');
+	    description.sendKeys('this is a description');
+	    save.click().then(function () {
+	      var tasktitle = driver.findElement({ name: 'task-title' });
+	      var taskbody = driver.findElement({ name: 'task-body' });
+	      return tasktitle.getText();
+	    }).then(function (text) {
+	      assert.equal(text, 'this is a title');
+	    });
+
+	    driver.quit();
+	  });
+
+	  test.it('should allow me to add multiple tasks', function () {
+	    var driver = new webdriver.Builder().forBrowser('chrome').build();
+
+	    driver.get('http://localhost:8080');
+
+	    var title = driver.findElement({ name: 'title' });
+	    var description = driver.findElement({ name: 'body' });
+	    var save = driver.findElement({ name: 'save-button' });
+
+	    title.sendKeys('this is a title');
+	    description.sendKeys('this is a description');
+	    save.click();
+
+	    title.sendKeys('this is a title');
+	    description.sendKeys('this is a description');
+	    save.click().then(function () {
+	      var tasktitle = driver.findElement({ name: 'task-title' });
+	      var taskbody = driver.findElement({ name: 'task-body' });
+	      var allTasks = driver.findElements({ tagName: 'p' });
+	      return allTasks;
+	    }).then(function (p) {
+	      assert.equal(p.length, 2);
 	    });
 
 	    driver.quit();
