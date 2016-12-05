@@ -123,16 +123,16 @@
 
 	var $ = __webpack_require__(4);
 
-	var NewIdea = function NewIdea(id, title, body) {
+	var NewTodo = function NewTodo(id, title, body) {
 	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
 	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-	  _classCallCheck(this, NewIdea);
+	  _classCallCheck(this, NewTodo);
 
 	  return { id: id, title: title, body: body, importance: importance, completed: completed };
 	};
 
-	exports.default = NewIdea;
+	exports.default = NewTodo;
 	var newTask = exports.newTask = function newTask(obj) {
 	  $('.task-container').prepend(createTaskBox(obj));
 	};
@@ -233,8 +233,6 @@
 	  taskArray.remove();
 	  return completedArray;
 	};
-
-	module.exports = NewIdea;
 
 /***/ },
 /* 3 */
