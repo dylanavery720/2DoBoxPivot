@@ -53724,20 +53724,18 @@
 
 	'use strict';
 
-	var _taskLoader = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./taskLoader\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-
-	var _taskLoader2 = _interopRequireDefault(_taskLoader);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var assert = __webpack_require__(330).assert;
 
+	var NewTodo = function NewTodo(id, title, body) {
+	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
+	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-	// class NewTodo {
-	//   constructor(id, title, body, importance = "Normal", completed = false) {
-	//     return {id, title, body, importance, completed};
-	//   }
-	// }
+	  _classCallCheck(this, NewTodo);
+
+	  return { id: id, title: title, body: body, importance: importance, completed: completed };
+	};
 
 	describe('todo list test bundle', function () {
 	  it('should work', function () {
@@ -53745,22 +53743,22 @@
 	  });
 
 	  it('should have a default importance of "Normal"', function () {
-	    var idea = new _taskLoader2.default('Kale');
+	    var idea = new NewTodo('Kale');
 	    assert.equal(idea.importance, 'Normal');
 	  });
 
 	  it('should accept a custom title', function () {
-	    var idea = new _taskLoader2.default(1, 'Kale');
+	    var idea = new NewTodo(1, 'Kale');
 	    assert.equal(idea.title, 'Kale');
 	  });
 
 	  it('should accept a custom body', function () {
-	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    var idea = new NewTodo(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
 	    assert.equal(idea.body, 'its not just for lining the buffet at Pizza Hut');
 	  });
 
 	  it('should not be completed upon creation', function () {
-	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    var idea = new NewTodo(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
 	    assert.equal(idea.completed, false);
 	  });
 	});
