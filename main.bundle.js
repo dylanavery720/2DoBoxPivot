@@ -1946,7 +1946,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getIncompleteTasks = exports.sortArray = exports.inputCheck = exports.displayedCheck = exports.mainFunction = undefined;
+	exports.getIncompleteTasks = exports.sortArray = exports.inputCheck = exports.filterCheckList = exports.displayedCheck = exports.mainFunction = undefined;
 
 	var _globalVars = __webpack_require__(3);
 
@@ -1974,6 +1974,17 @@
 	  });
 
 	  return displayedTasksIds;
+	};
+
+	var filterCheckList = exports.filterCheckList = function filterCheckList() {
+	  var checkboxCheck = $(".filter-buttons-container").children("label");
+
+	  checkboxCheck.each(function (e) {
+	    if ($(checkboxCheck[e]).children().is(":checked")) {
+	      filterArray.push($(checkboxCheck[e]).text());
+	    }
+	  });
+	  return filterArray;
 	};
 
 	var inputCheck = exports.inputCheck = function inputCheck() {
@@ -2160,20 +2171,13 @@
 	});
 
 	$(".filter-buttons-container").on("click", function (e) {
-	  var checkboxCheck = $(".filter-buttons-container").children("label");
+	  var filterArray = (0, _miscFunctions.filterCheckList)();
 	  var incompleteTasks = (0, _miscFunctions.getIncompleteTasks)((0, _storage.storageArray)());
 	  var numCompletedTasks = (0, _taskLoader.clearTasks)();
-	  var filterArray = [];
 	  var arrayToDisplay = [];
 
 	  $(".task-box").remove();
 	  globalVars.completedDisplayed = false;
-
-	  checkboxCheck.each(function (e) {
-	    if ($(checkboxCheck[e]).children().is(":checked")) {
-	      filterArray.push($(checkboxCheck[e]).text());
-	    }
-	  });
 
 	  filterArray.forEach(function (e) {
 	    incompleteTasks.forEach(function (i) {
