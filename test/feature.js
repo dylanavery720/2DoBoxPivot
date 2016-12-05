@@ -2,7 +2,7 @@ const assert    = require('assert');
 const webdriver = require('selenium-webdriver');
 const test      = require('selenium-webdriver/testing')
 
-test.describe('testing ideabox', function(){
+test.describe('testing 2dobox', function(){
   this.timeout(10000)
   test.it('should allow me to add a title and a description', ()=>{
     const driver = new webdriver.Builder()
