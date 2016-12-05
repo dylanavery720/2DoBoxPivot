@@ -491,97 +491,6 @@
 	__webpack_require__(31);
 	__webpack_require__(329);
 
-	// const assert    = require('assert');
-	// const webdriver = require('selenium-webdriver');
-	// const test      = require('selenium-webdriver/testing')
-	//
-	// test.describe('testing ideabox', function(){
-	//   this.timeout(10000)
-	//   test.it('should allow me to add a title and a description', ()=>{
-	//     const driver = new webdriver.Builder()
-	//     .forBrowser('chrome')
-	//     .build();
-	//
-	//     driver.get('http://localhost:8080');
-	//
-	//     const title = driver.findElement({name: 'title'})
-	//     const description = driver.findElement({name: 'body'})
-	//     title.sendKeys('this is a title').then(()=>{
-	//       return title.getAttribute('value')
-	//     }).then((value)=>{
-	//       assert.equal(value, 'this is a title')
-	//     })
-	//
-	//     description.sendKeys('this is a description').then(()=>{
-	//       return description.getAttribute('value')
-	//     }).then((value)=>{
-	//       assert.equal(value, 'this is a description')
-	//     })
-	//
-	//     driver.quit()
-	//   })
-	//
-	//   test.it('should allow me to submit a task', ()=>{
-	//     const driver = new webdriver.Builder()
-	//     .forBrowser('chrome')
-	//     .build();
-	//
-	//     driver.get('http://localhost:8080');
-	//
-	//     const title = driver.findElement({name: 'title'})
-	//     const description = driver.findElement({name: 'body'})
-	//     const save = driver.findElement({name: 'save-button'})
-	//
-	//
-	//     title.sendKeys('this is a title')
-	//     description.sendKeys('this is a description')
-	//       save.click().then(()=>{
-	//       const tasktitle = driver.findElement({name: 'task-title'})
-	//       const taskbody = driver.findElement({name: 'task-body'})
-	//       return tasktitle.getText()
-	//     }).then((text)=>{
-	//       assert.equal(text, 'this is a title')
-	//     })
-	//
-	//
-	//
-	//
-	//     driver.quit()
-	//   })
-	//
-	//   test.it('should allow me to add multiple tasks', ()=>{
-	//     const driver = new webdriver.Builder()
-	//     .forBrowser('chrome')
-	//     .build();
-	//
-	//     driver.get('http://localhost:8080');
-	//
-	//     const title = driver.findElement({name: 'title'})
-	//     const description = driver.findElement({name: 'body'})
-	//     const save = driver.findElement({name: 'save-button'})
-	//
-	//     title.sendKeys('this is a title')
-	//     description.sendKeys('this is a description')
-	//     save.click();
-	//
-	//     title.sendKeys('this is a title')
-	//     description.sendKeys('this is a description')
-	//       save.click().then(()=>{
-	//       const tasktitle = driver.findElement({name: 'task-title'})
-	//       const taskbody = driver.findElement({name: 'task-body'})
-	//       const allTasks = driver.findElements({tagName: 'p'})
-	//       return allTasks;
-	//     }).then((p)=>{
-	//       assert.equal(p.length, 2)
-	//     })
-	//
-	//
-	//
-	//
-	//     driver.quit()
-	//   })
-	// })
-
 /***/ },
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
@@ -53724,20 +53633,18 @@
 
 	'use strict';
 
-	var _taskLoader = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./taskLoader\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-
-	var _taskLoader2 = _interopRequireDefault(_taskLoader);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var assert = __webpack_require__(330).assert;
 
+	var NewTodo = function NewTodo(id, title, body) {
+	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
+	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-	// class NewTodo {
-	//   constructor(id, title, body, importance = "Normal", completed = false) {
-	//     return {id, title, body, importance, completed};
-	//   }
-	// }
+	  _classCallCheck(this, NewTodo);
+
+	  return { id: id, title: title, body: body, importance: importance, completed: completed };
+	};
 
 	describe('todo list test bundle', function () {
 	  it('should work', function () {
@@ -53745,23 +53652,23 @@
 	  });
 
 	  it('should have a default importance of "Normal"', function () {
-	    var idea = new _taskLoader2.default('Kale');
-	    assert.equal(idea.importance, 'Normal');
+	    var todo = new NewTodo('Kale');
+	    assert.equal(todo.importance, 'Normal');
 	  });
 
 	  it('should accept a custom title', function () {
-	    var idea = new _taskLoader2.default(1, 'Kale');
-	    assert.equal(idea.title, 'Kale');
+	    var todo = new NewTodo(1, 'Kale');
+	    assert.equal(todo.title, 'Kale');
 	  });
 
 	  it('should accept a custom body', function () {
-	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
-	    assert.equal(idea.body, 'its not just for lining the buffet at Pizza Hut');
+	    var todo = new NewTodo(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    assert.equal(todo.body, 'its not just for lining the buffet at Pizza Hut');
 	  });
 
 	  it('should not be completed upon creation', function () {
-	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
-	    assert.equal(idea.completed, false);
+	    var todo = new NewTodo(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    assert.equal(todo.completed, false);
 	  });
 	});
 

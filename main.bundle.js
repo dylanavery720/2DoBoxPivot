@@ -180,11 +180,12 @@
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
+	    var numOfTasksDisplayed = $(".task-box").length;
 
 	    if (storedObj.completed && idCheck < 0) {
 	      newTask(storedObj);
 	      (0, _completeTask.complete)($($(".task-box")[0]));
-	      if (globalVars.topTen && globalVars.completedDisplayed) {
+	      if (globalVars.topTen && globalVars.completedDisplayed && numOfTasksDisplayed > 9) {
 	        $(".task-box").last().remove();
 	      }
 	    }
@@ -2105,8 +2106,8 @@
 
 	$('#save-button').on('click', function () {
 	  var val = [Date.now(), globalVars.$title.val(), globalVars.$body.val()];
-	  var newIdeaObject = new (Function.prototype.bind.apply(_taskLoader2.default, [null].concat(val)))();
-	  (0, _miscFunctions.mainFunction)(newIdeaObject);
+	  var newTodoObject = new (Function.prototype.bind.apply(_taskLoader2.default, [null].concat(val)))();
+	  (0, _miscFunctions.mainFunction)(newTodoObject);
 	});
 
 	$('.task-container').on('click', '.delete-button', function (e) {
@@ -2174,6 +2175,11 @@
 	  globalVars.completedDisplayed = false;
 	  globalVars.showCompleteBtnToggle = false;
 	  $("#show-completed-button").text("Show Completed 2Do's");
+	  if ((0, _miscFunctions.filterCheckboxList)().length) {
+	    $("#show-completed-button").prop("disabled", true);
+	  } else {
+	    $("#show-completed-button").prop("disabled", false);
+	  }
 	  (0, _taskLoader.updateDisplayedTasks)();
 	});
 
