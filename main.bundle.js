@@ -103,7 +103,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.clearTasks = exports.showMoreTasks = exports.showCompletedTasks = exports.displayTasks = exports.loadTopTenTasks = exports.newTask = undefined;
+	exports.clearTasks = exports.updateDisplayedTasks = exports.showMoreTasks = exports.showCompletedTasks = exports.displayTasks = exports.loadTopTenTasks = exports.newTask = undefined;
 
 	var _globalVars = __webpack_require__(3);
 
@@ -142,13 +142,11 @@
 	};
 
 	var createTaskBox = function createTaskBox(obj) {
-	  return "\n    <article id=" + obj.id + " class='task-box'>\n      <div class='flexer'>\n        <button type='button' name='button' class='delete-button'>DELETE</button>\n          <h2 class='task-title' name='task-title' contenteditable>" + obj.title + "</h2>\n      </div>\n      <p class='task-body' name='task-body' contenteditable>" + obj.body + "</p>\n      <div class='importance-container'>\n          <button type='button' name='button' class='up-button'>UPVOTE</button>\n          <button type='button' name='button' class='down-button'>DOWNVOTE</button>\n          <h4 tabindex=\"0\">importance: </h4>\n          <h4 class='importance-rating' tabindex=\"0\">" + obj.importance + "</h4>\n          <button type='button' name='button' class='complete-button'>COMPLETED TASK</button>\n      </div>\n  </article>";
+	  return "\n    <article id=" + obj.id + " class='task-box'>\n      <div class='flexer'>\n        <button type='button' name='delete-button' class='delete-button'>DELETE</button>\n          <h2 class='task-title' name='task-title' contenteditable>" + obj.title + "</h2>\n      </div>\n      <p class='task-body' name='task-body' contenteditable>" + obj.body + "</p>\n      <div class='importance-container'>\n          <button type='button' name='button' class='up-button'>UPVOTE</button>\n          <button type='button' name='button' class='down-button'>DOWNVOTE</button>\n          <h4 tabindex=\"0\">importance: </h4>\n          <h4 class='importance-rating' tabindex=\"0\">" + obj.importance + "</h4>\n          <button type='button' name='button' class='complete-button'>COMPLETED TASK</button>\n      </div>\n  </article>";
 	};
 
 	var loadTopTenTasks = exports.loadTopTenTasks = function loadTopTenTasks(storedObjArray) {
-	  var numCompletedTasks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-	  var storageNumber = numCompletedTasks;
+	  var storageNumber = 0;
 	  var displayArray = [];
 
 	  storedObjArray.forEach(function (e) {
@@ -176,17 +174,17 @@
 	};
 
 	var showCompletedTasks = exports.showCompletedTasks = function showCompletedTasks() {
-	  var displayedTasksIds = (0, _miscFunctions.displayedCheck)();
+	  var displayedTasksIds = (0, _miscFunctions.displayedIdCheck)();
+	  var arrayToDisplay = (0, _miscFunctions.filteredArrayList)();
 
 	  for (var i = 0; i < localStorage.length; i++) {
 	    var storedObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
 	    var idCheck = displayedTasksIds.indexOf(storedObj.id.toString());
-	    var numCompletedTasks = 0;
 
 	    if (storedObj.completed && idCheck < 0) {
 	      newTask(storedObj);
 	      (0, _completeTask.complete)($($(".task-box")[0]));
-	      if (globalVars.topTen && globalVars.completedDisplayed && !globalVars.showCompleteBtnToggle) {
+	      if (globalVars.topTen && globalVars.completedDisplayed) {
 	        $(".task-box").last().remove();
 	      }
 	    }
@@ -194,39 +192,27 @@
 	};
 
 	var showMoreTasks = exports.showMoreTasks = function showMoreTasks() {
+	  updateDisplayedTasks();
+	};
+
+	var updateDisplayedTasks = exports.updateDisplayedTasks = function updateDisplayedTasks() {
 	  var checkboxCheck = $(".filter-buttons-container").children("label");
-	  var storedObjArray = (0, _storage.storageArray)();
-	  var numCompletedTasks = clearTasks();
-	  var incompleteTasks = (0, _miscFunctions.getIncompleteTasks)(storedObjArray);
-	  var filterArray = [];
-	  var arrayToDisplay = [];
+	  var arrayToDisplay = (0, _miscFunctions.filteredArrayList)();
+	  var incompleteTasks = (0, _miscFunctions.getIncompleteTasks)((0, _storage.storageArray)());
+	  clearTasks();
 
-	  checkboxCheck.each(function (e) {
-	    if ($(checkboxCheck[e]).children().is(":checked")) {
-	      filterArray.push($(checkboxCheck[e]).text());
-	    }
-	  });
-
-	  filterArray.forEach(function (e) {
-	    storedObjArray.forEach(function (i) {
-	      if (e === i.importance) {
-	        arrayToDisplay.push(i);
-	      }
-	    });
-	  });
-
-	  if (filterArray.length === 0 && globalVars.topTen && globalVars.completedDisplayed) {
-	    loadTopTenTasks((0, _miscFunctions.sortArray)(incompleteTasks), numCompletedTasks);
+	  if (arrayToDisplay.length === 0 && globalVars.topTen && globalVars.completedDisplayed) {
+	    loadTopTenTasks((0, _miscFunctions.sortArray)(incompleteTasks));
 	    showCompletedTasks();
-	  } else if (filterArray.length === 0 && !globalVars.topTen && globalVars.completedDisplayed) {
+	  } else if (arrayToDisplay.length === 0 && !globalVars.topTen && globalVars.completedDisplayed) {
 	    displayTasks((0, _miscFunctions.sortArray)(incompleteTasks));
 	    showCompletedTasks();
-	  } else if (filterArray.length === 0 && globalVars.topTen && !globalVars.completedDisplayed) {
+	  } else if (arrayToDisplay.length === 0 && globalVars.topTen && !globalVars.completedDisplayed) {
 	    loadTopTenTasks((0, _miscFunctions.sortArray)(incompleteTasks));
-	  } else if (filterArray.length === 0 && !globalVars.topTen && !globalVars.completedDisplayed) {
+	  } else if (arrayToDisplay.length === 0 && !globalVars.topTen && !globalVars.completedDisplayed) {
 	    displayTasks((0, _miscFunctions.sortArray)(incompleteTasks));
 	  } else {
-	    if (topTen) {
+	    if (globalVars.topTen) {
 	      loadTopTenTasks((0, _miscFunctions.sortArray)(arrayToDisplay));
 	    } else {
 	      displayTasks((0, _miscFunctions.sortArray)(arrayToDisplay));
@@ -247,6 +233,8 @@
 	  taskArray.remove();
 	  return completedArray;
 	};
+
+	module.exports = NewIdea;
 
 /***/ },
 /* 3 */
@@ -1946,11 +1934,13 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getIncompleteTasks = exports.sortArray = exports.inputCheck = exports.filterCheckList = exports.displayedCheck = exports.mainFunction = undefined;
+	exports.completeButtonToggle = exports.getIncompleteTasks = exports.sortArray = exports.inputCheck = exports.filteredArrayList = exports.filterCheckboxList = exports.displayedIdCheck = exports.mainFunction = undefined;
 
 	var _globalVars = __webpack_require__(3);
 
 	var globalVars = _interopRequireWildcard(_globalVars);
+
+	var _storage = __webpack_require__(1);
 
 	var _taskLoader = __webpack_require__(2);
 
@@ -1963,7 +1953,7 @@
 	  clearFields();
 	};
 
-	var displayedCheck = exports.displayedCheck = function displayedCheck() {
+	var displayedIdCheck = exports.displayedIdCheck = function displayedIdCheck() {
 	  var displayedTasksArray = $(".task-box");
 	  var displayedTasksIds = [];
 
@@ -1976,8 +1966,9 @@
 	  return displayedTasksIds;
 	};
 
-	var filterCheckList = exports.filterCheckList = function filterCheckList() {
+	var filterCheckboxList = exports.filterCheckboxList = function filterCheckboxList() {
 	  var checkboxCheck = $(".filter-buttons-container").children("label");
+	  var filterArray = [];
 
 	  checkboxCheck.each(function (e) {
 	    if ($(checkboxCheck[e]).children().is(":checked")) {
@@ -1985,6 +1976,22 @@
 	    }
 	  });
 	  return filterArray;
+	};
+
+	var filteredArrayList = exports.filteredArrayList = function filteredArrayList() {
+	  var filterArray = filterCheckboxList();
+	  var storedObjArray = (0, _storage.storageArray)();
+	  var arrayToDisplay = [];
+
+	  filterArray.forEach(function (e) {
+	    storedObjArray.forEach(function (i) {
+	      if (e === i.importance && !i.completed) {
+	        arrayToDisplay.push(i);
+	      }
+	    });
+	  });
+
+	  return arrayToDisplay;
 	};
 
 	var inputCheck = exports.inputCheck = function inputCheck() {
@@ -2014,6 +2021,16 @@
 	    }
 	  });
 	  return incompleteTasks;
+	};
+
+	var completeButtonToggle = exports.completeButtonToggle = function completeButtonToggle() {
+	  if (globalVars.showCompleteBtnToggle) {
+	    globalVars.showCompleteBtnToggle = false;
+	    $("#show-completed-button").text("Show Completed 2Do's");
+	  } else {
+	    globalVars.showCompleteBtnToggle = true;
+	    $("#show-completed-button").text("Hide Completed 2Do's");
+	  }
 	};
 
 /***/ },
@@ -2127,95 +2144,39 @@
 	});
 
 	$("#show-completed-button").on("click", function () {
-	  var arrayToDisplay = [];
 	  var incompleteTasks = (0, _miscFunctions.getIncompleteTasks)((0, _storage.storageArray)());
-
 	  if (globalVars.completedDisplayed && globalVars.topTen) {
 	    (0, _taskLoader.clearTasks)();
-	    incompleteTasks.forEach(function (i) {
-	      if (!i.completed) {
-	        arrayToDisplay.push(i);
-	      }
-	    });
-	    (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(arrayToDisplay));
+	    (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
 	    globalVars.completedDisplayed = false;
 	  } else if (globalVars.completedDisplayed && !globalVars.topTen) {
 	    (0, _taskLoader.clearTasks)();
-	    incompleteTasks.forEach(function (i) {
-	      if (!i.completed) {
-	        arrayToDisplay.push(i);
-	      }
-	    });
-	    (0, _taskLoader.displayTasks)((0, _miscFunctions.sortArray)(arrayToDisplay));
+	    (0, _taskLoader.displayTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
 	    globalVars.completedDisplayed = false;
 	  } else {
 	    globalVars.completedDisplayed = true;
 	    (0, _taskLoader.showCompletedTasks)();
 	  }
-
-	  if (!globalVars.howCompleteBtnToggle) {
-	    globalVars.howCompleteBtnToggle = true;
-	  } else {
-	    globalVars.howCompleteBtnToggle = false;
-	  }
+	  (0, _miscFunctions.completeButtonToggle)();
 	});
 
 	$("#show-more-button").on("click", function () {
-	  globalVars.howCompleteBtnToggle = true;
 	  if (globalVars.topTen) {
 	    globalVars.topTen = false;
+	    $("#show-more-button").text("Show Recent 10 2Do's");
 	  } else {
 	    globalVars.topTen = true;
+	    $("#show-more-button").text("Show More 2Do's");
 	  }
 	  (0, _taskLoader.showMoreTasks)();
 	});
 
 	$(".filter-buttons-container").on("click", function (e) {
-	  var filterArray = (0, _miscFunctions.filterCheckList)();
-	  var incompleteTasks = (0, _miscFunctions.getIncompleteTasks)((0, _storage.storageArray)());
-	  var numCompletedTasks = (0, _taskLoader.clearTasks)();
-	  var arrayToDisplay = [];
-
 	  $(".task-box").remove();
 	  globalVars.completedDisplayed = false;
-
-	  filterArray.forEach(function (e) {
-	    incompleteTasks.forEach(function (i) {
-	      if (e === i.importance) {
-	        arrayToDisplay.push(i);
-	      }
-	    });
-	  });
-
-	  if (filterArray.length === 0 && globalVars.topTen && globalVars.completedDisplayed) {
-	    (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(incompleteTasks), numCompletedTasks);
-	    (0, _taskLoader.showCompletedTasks)();
-	  } else if (filterArray.length === 0 && !globalVars.topTen && globalVars.completedDisplayed) {
-	    (0, _taskLoader.displayTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
-	    (0, _taskLoader.showCompletedTasks)();
-	  } else if (filterArray.length === 0 && globalVars.topTen && !globalVars.completedDisplayed) {
-	    (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
-	  } else if (filterArray.length === 0 && !globalVars.topTen && !globalVars.completedDisplayed) {
-	    (0, _taskLoader.displayTasks)((0, _miscFunctions.sortArray)(incompleteTasks));
-	  } else {
-	    if (globalVars.topTen) {
-	      (0, _taskLoader.loadTopTenTasks)((0, _miscFunctions.sortArray)(arrayToDisplay));
-	    } else {
-	      (0, _taskLoader.displayTasks)((0, _miscFunctions.sortArray)(arrayToDisplay));
-	    }
-	  }
-
-	  // if(filterArray.length === 0 && topTen && !globalVars.completedDisplayed){
-	  //   loadTopTenTasks(sortArray(incompleteTasks));
-	  // } else if (filterArray.length === 0 && !topTen && !globalVars.completedDisplayed){
-	  //   displayTasks(sortArray(incompleteTasks));
-	  // } else {
-	  //   if(topTen){
-	  //     loadTopTenTasks(sortArray(arrayToDisplay));
-	  //   } else {
-	  //     displayTasks(sortArray(arrayToDisplay));
-	  //   }
-	  // }
+	  globalVars.showCompleteBtnToggle = false;
+	  $("#show-completed-button").text("Show Completed 2Do's");
+	  (0, _taskLoader.updateDisplayedTasks)();
 	});
 
 /***/ },
