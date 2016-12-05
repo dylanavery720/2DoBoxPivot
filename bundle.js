@@ -56,7 +56,7 @@
 	var $h2 = $('h2');
 	var $p = $('p');
 
-	function NewIdea(id, title, body, quality) {
+	function NewTodo(id, title, body, quality) {
 	  this.id = id;
 	  this.title = title;
 	  this.body = body;
@@ -210,13 +210,13 @@
 	$('.all-input').keypress(function(event){
 	  if (event.which == 13 && $title.val() && $body.val()) {
 	    event.preventDefault();
-	    var newIdeaObject = new NewIdea(ideaCount, $title.val(), $body.val(), 'quality: swill');
+	    var newIdeaObject = new NewTodo(ideaCount, $title.val(), $body.val(), 'quality: swill');
 	    mainFunction(newIdeaObject);
 	  }
 	});
 
 	$('#save-button').on('click', function() {
-	  var newIdeaObject = new NewIdea(ideaCount, $title.val(), $body.val(), 'quality: swill');
+	  var newIdeaObject = new NewTodo(ideaCount, $title.val(), $body.val(), 'quality: swill');
 	  mainFunction(newIdeaObject);
 	});
 

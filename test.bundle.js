@@ -592,7 +592,7 @@
 	var webdriver = __webpack_require__(37);
 	var test = __webpack_require__(328);
 
-	test.describe('testing ideabox', function () {
+	test.describe('testing 2dobox', function () {
 	  this.timeout(10000);
 	  test.it('should allow me to add a title and a description', function () {
 	    var driver = new webdriver.Builder().forBrowser('chrome').build();
@@ -53724,18 +53724,20 @@
 
 	'use strict';
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var _taskLoader = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./taskLoader\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+	var _taskLoader2 = _interopRequireDefault(_taskLoader);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var assert = __webpack_require__(330).assert;
 
-	var NewIdea = function NewIdea(id, title, body) {
-	  var importance = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "Normal";
-	  var completed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-	  _classCallCheck(this, NewIdea);
-
-	  return { id: id, title: title, body: body, importance: importance, completed: completed };
-	};
+	// class NewTodo {
+	//   constructor(id, title, body, importance = "Normal", completed = false) {
+	//     return {id, title, body, importance, completed};
+	//   }
+	// }
 
 	describe('todo list test bundle', function () {
 	  it('should work', function () {
@@ -53743,22 +53745,22 @@
 	  });
 
 	  it('should have a default importance of "Normal"', function () {
-	    var idea = new NewIdea('Kale');
+	    var idea = new _taskLoader2.default('Kale');
 	    assert.equal(idea.importance, 'Normal');
 	  });
 
 	  it('should accept a custom title', function () {
-	    var idea = new NewIdea(1, 'Kale');
+	    var idea = new _taskLoader2.default(1, 'Kale');
 	    assert.equal(idea.title, 'Kale');
 	  });
 
 	  it('should accept a custom body', function () {
-	    var idea = new NewIdea(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
 	    assert.equal(idea.body, 'its not just for lining the buffet at Pizza Hut');
 	  });
 
 	  it('should not be completed upon creation', function () {
-	    var idea = new NewIdea(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
+	    var idea = new _taskLoader2.default(2, 'Kale', 'its not just for lining the buffet at Pizza Hut');
 	    assert.equal(idea.completed, false);
 	  });
 	});
