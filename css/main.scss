@@ -142,6 +142,10 @@ textarea {
 
 .filter-buttons-container {
   text-align: center;
+  font-weight: normal;
+  font-family: $body-font;
+  color: $button-text-color;
+  padding: 5px;
 }
 
 .right-container {
