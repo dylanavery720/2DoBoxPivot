@@ -1,0 +1,56 @@
+body {
+  font-family: $body-font;
+}
+
+.right-container {
+  position: absolute;
+  width: 70%;
+  right: 0;
+}
+
+.left-container {
+  background: $background-color;
+  padding: 5px;
+  position: fixed;
+  height: 100%;
+  width: 30%;
+  text-align: center;
+  @include main-font;
+
+   header {
+     margin: 10px auto;
+     font-size: 2.5em;
+     color: $button-text-color;
+   }
+}
+
+article {
+  border-bottom: 2px solid $under-line-color;
+
+    h2 {
+      font-size: 1.4em;
+      padding: 5px 0px;
+      margin-left: 5px;
+      @include main-font;
+    }
+  }
+
+
+  p {
+    display: block;
+    padding: 12px 0px;
+    text-align: left;
+    margin-left: 5px;
+  }
+
+@media (max-width: 700px) {
+  .left-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .right-container {
+    position: relative;
+    width: 100%;
+  }
+}

@@ -7,8 +7,8 @@
     <title>2DoBox</title>
   </head>
   <body>
-    <header>
-      <h1><span class="task-header">2Do</span>Box</h1>
+    <section class="left-container">
+      <header><span class="task-header">2Do</span>Box</header>
       <div class="input-container">
         <input type="text" name="title" value="" placeholder="Title" id="title-input" class="all-input">
         <textarea type="textarea" name="body" value="" placeholder="Task" id="body-input" class="all-input"></textarea>
@@ -26,13 +26,13 @@
           <label><input id="low-button" class="filter-button" type="checkbox">Low</label>
           <label><input id="none-button" class="filter-button" type="checkbox">None</label>
         </section>
-    </header>
-  <div class="right-container">
+    </section>
+  <section class="right-container">
 
     <section class="task-container">
     </section>
     <button type='button' name='button' id='show-more-button'>Show More 2Do's</button>
-  </div>
+  </section>
     <script src="main.bundle.js"></script>
   </body>
 </html>

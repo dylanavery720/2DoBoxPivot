@@ -1,0 +1,44 @@
+.filter-text-container{
+  border: none;
+}
+
+.filter-text {
+  display: inline-block;
+  border-bottom: 2px solid;
+  margin: 5px;
+}
+
+.flexer {
+  margin-top: 15px;
+}
+
+.task-container {
+  margin: 32px;
+}
+
+.task-header {
+  color: $button-text-color;
+}
+
+.importance-container {
+  padding: 15px 0px 10px 8px;
+  margin-bottom: 15px;
+}
+
+.importance-rating, h4 {
+  display: inline-block;
+}
+
+.completed-task {
+  background-color: $completed-task-color;
+  text-decoration: line-through;
+  color: $background-color;
+}
+
+.filter-buttons-container {
+  text-align: center;
+  font-weight: normal;
+  font-family: $body-font;
+  color: $button-text-color;
+  padding: 5px;
+}

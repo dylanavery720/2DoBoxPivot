@@ -1,0 +1,23 @@
+#title-input {
+  @include button-space;
+  @include input-style;
+}
+
+
+
+textarea {
+  resize: none;
+  @include button-space;
+  @include input-style;
+}
+
+
+#search-box {
+  width: 88%;
+  @include button-space;
+  @include input-style;
+}
+
+#body-input {
+  height: 7em;
+}
