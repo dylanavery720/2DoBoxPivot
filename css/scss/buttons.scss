@@ -1,0 +1,112 @@
+#save-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-completed-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled] {
+    @include disabled-button;
+  }
+}
+
+#show-more-button {
+  @include button-space;
+  @include button-coloring;
+  &:hover {
+    @include button-hover;
+  }
+  &:focus {
+    @include button-hover;
+  }
+  &[disabled]{
+    @include disabled-button;
+  }
+}
+
+
+.complete-button {
+  float: right;
+  margin-right: 5px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
+}
+
+.filter-button {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 0px 5px;
+  @include secondary-button-coloring;
+  &:hover {
+    @include button-focus;
+  }
+  &:focus {
+    @include button-focus;
+  }
+}
+
+.up-button {
+  background: url('../images/upvote.svg') no-repeat;
+  float: left;
+  margin: -7px;
+  @include button-size;
+  &:hover {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/upvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.down-button {
+  background: url('../images/downvote.svg') no-repeat;
+  float: left;
+  margin: -7px 12px;
+  @include button-size;
+  &:hover {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/downvote-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
+
+.delete-button {
+  background: url('../images/delete.svg') no-repeat;
+  float: right;
+  margin: 5px 5px 0 0;
+  @include button-size;
+  &:hover {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+  &:focus {
+    background: url('../images/delete-hover.svg') no-repeat;
+    cursor: pointer;
+  }
+}
